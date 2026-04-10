@@ -1,0 +1,64 @@
+# =============================================================================
+# Deepfake Detector — Master Configuration
+# =============================================================================
+
+# --- Hardware ---
+hardware:
+  device: "cuda"
+  num_workers: 0
+  pin_memory: true
+  mixed_precision: true
+  gradient_checkpointing: true
+
+# --- Data ---
+data:
+  root_dir: "data/"
+  image_size: 160
+  num_frames: 8             # frames sampled per video
+  face_margin: 0.3          # margin around detected face
+  train_split: 0.8
+  val_split: 0.1
+  test_split: 0.1
+
+# --- Augmentation ---
+augmentation:
+  enabled: true
+  jpeg_quality_range: [30, 100]
+  gaussian_blur_limit: 5
+  noise_var_limit: [10, 50]
+  color_jitter: 0.2
+  horizontal_flip: 0.5
+  rotation_limit: 15
+
+# --- Training ---
+training:
+  batch_size: 2
+  gradient_accumulation_steps: 8   # effective batch = 16
+  num_epochs: 50
+  learning_rate: 1.0e-4
+  weight_decay: 1.0e-4
+  warmup_epochs: 3
+  scheduler: "cosine"              # cosine | step | plateau
+  early_stopping_patience: 10
+  checkpoint_dir: "checkpoints/"
+  log_dir: "logs/"
+
+# --- Loss weights (multi-task) ---
+loss:
+  binary_weight: 1.0
+  manipulation_type_weight: 0.5
+  clip_alignment_weight: 0.3
+  consistency_weight: 0.2
+
+# --- Evaluation ---
+evaluation:
+  threshold: 0.162    # calibrated optimal threshold (temperature=4.397)
+  save_predictions: true
+  output_dir: "results/"
+
+# --- Inference ---
+inference:
+  checkpoint_path: "checkpoints/best_model.pth"
+  output_dir: "inference_output/"
+  save_heatmaps: true
+  save_forensic_report: true

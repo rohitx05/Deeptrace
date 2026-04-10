@@ -1,0 +1,81 @@
+# =============================================================================
+# Deepfake Detector V2 — Extended Model Architecture Configuration
+# =============================================================================
+
+# --- Spatial Encoder (unchanged) ---
+spatial_encoder:
+  backbone: "efficientnet_b0"
+  pretrained: true
+  feature_dim: 1280
+  gradient_checkpointing: true
+  drop_rate: 0.2
+
+# --- Frequency Encoder (DCT branch, unchanged) ---
+frequency_encoder:
+  backbone: "efficientnet_b0"
+  pretrained: true
+  feature_dim: 1280
+  dct_channels: 3
+  gradient_checkpointing: true
+  drop_rate: 0.2
+
+# --- NEW: Multi-Spectral Combiner ---
+spectral_combiner:
+  fft_dim: 256
+  wavelet_dim: 256
+  noise_dim: 256
+  output_dim: 1280
+  gradient_checkpointing: true
+
+# --- Temporal Model (unchanged) ---
+temporal_model:
+  type: "video_swin_tiny"
+  embed_dim: 96
+  depths: [2, 2, 6, 2]
+  num_heads: [3, 6, 12, 24]
+  window_size: [8, 5, 5]
+  patch_size: [2, 4, 4]
+  feature_dim: 768
+  drop_rate: 0.1
+  attn_drop_rate: 0.1
+  gradient_checkpointing: true
+
+# --- Physiology Encoder (unchanged) ---
+physiology_encoder:
+  feature_dim: 64
+  hidden_dim: 128
+  num_layers: 2
+
+# --- CLIP Alignment (unchanged) ---
+clip_alignment:
+  model_name: "ViT-B-32"
+  pretrained_dataset: "openai"
+  feature_dim: 512
+  projection_dim: 256
+  freeze_clip: true
+
+# --- NEW: Identity Encoder ---
+identity_encoder:
+  feature_dim: 128
+  embedding_dim: 512
+  freeze_backbone: true
+
+# --- NEW: RAG Retrieval ---
+rag_retrieval:
+  query_dim: 512
+  output_dim: 256
+  top_k: 8
+
+# --- NEW: Multimodal Transformer Fusion ---
+fusion_transformer:
+  hidden_dim: 512
+  num_heads: 8
+  num_layers: 4
+  dropout: 0.1
+
+# --- Extended Detection Head ---
+detection_head:
+  hidden_dim: 256
+  num_manipulation_types: 5
+  num_generator_types: 4
+  dropout: 0.3

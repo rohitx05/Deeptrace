@@ -1,0 +1,26 @@
+paths:
+  root: .
+  state_file: project_state.json
+  summary_file: context_summary.md
+  base_config: configs/config.yaml
+  model_config: configs/model_config.yaml
+  model_config_v2: configs/model_config_v2.yaml
+  active_checkpoint: checkpoints/kaggle_realfake/best_model.pth
+  calibration_file: checkpoints/kaggle_realfake/calibration.json
+  checkpoints_dir: checkpoints
+  logs_dir: logs
+  active_model_config: configs/model_config.yaml
+device_config:
+  device: auto
+  num_workers: 0
+  pin_memory: true
+runtime:
+  batch_size: 2
+  image_size: 160
+  num_frames: 8
+flags:
+  use_calibration: true
+  use_amp: true
+  auto_load_project_memory: true
+  auto_update_project_memory: true
+  auto_compress_context: true

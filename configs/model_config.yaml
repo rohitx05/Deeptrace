@@ -1,0 +1,61 @@
+# =============================================================================
+# Deepfake Detector — Model Architecture Configuration
+# =============================================================================
+
+# --- Spatial Encoder ---
+spatial_encoder:
+  backbone: "efficientnet_b0"
+  pretrained: true
+  feature_dim: 1280
+  gradient_checkpointing: true
+  drop_rate: 0.2
+
+# --- Frequency Encoder ---
+frequency_encoder:
+  backbone: "efficientnet_b0"
+  pretrained: true
+  feature_dim: 1280
+  dct_channels: 3           # Y, Cb, Cr DCT channels
+  gradient_checkpointing: true
+  drop_rate: 0.2
+
+# --- Temporal Model (Video Swin Transformer Tiny) ---
+temporal_model:
+  type: "video_swin_tiny"
+  embed_dim: 96
+  depths: [2, 2, 6, 2]
+  num_heads: [3, 6, 12, 24]
+  window_size: [8, 7, 7]     # [temporal, height, width]
+  patch_size: [2, 4, 4]
+  feature_dim: 768
+  drop_rate: 0.1
+  attn_drop_rate: 0.1
+  gradient_checkpointing: true
+
+# --- Physiology Encoder ---
+physiology_encoder:
+  feature_dim: 64
+  hidden_dim: 128
+  num_layers: 2
+
+# --- CLIP Alignment ---
+clip_alignment:
+  model_name: "ViT-B-32"
+  pretrained_dataset: "openai"
+  feature_dim: 512
+  projection_dim: 256
+  freeze_clip: true
+
+# --- Fusion ---
+fusion:
+  type: "cross_attention"
+  hidden_dim: 512
+  num_heads: 8
+  num_layers: 2
+  dropout: 0.1
+
+# --- Detection Head ---
+detection_head:
+  hidden_dim: 256
+  num_manipulation_types: 5  # real, Deepfakes, Face2Face, FaceSwap, NeuralTextures
+  dropout: 0.3

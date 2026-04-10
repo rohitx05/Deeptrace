@@ -1,0 +1,39 @@
+# Virtual environments
+.venv/
+venv/
+
+# Dataset images (too large for GitHub)
+data/
+datasets/
+test_data/
+results_test/
+inference_output/
+
+# Model checkpoints (large binary files)
+checkpoints/
+*.pt
+*.pth
+*.ckpt
+*.bin
+*.safetensors
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Logs
+logs/
+*.log
+
+# VS Code
+.vscode/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Misc
+*.egg-info/
+dist/
+build/

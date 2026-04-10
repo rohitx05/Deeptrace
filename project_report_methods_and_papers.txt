@@ -1,0 +1,466 @@
+PROJECT REPORT NOTES: METHODS, MODELS, TECHNOLOGIES, AND RELATED PAPERS
+
+Prepared from the current project context plus the main implementation files in this repository.
+
+IMPORTANT SCOPE NOTE
+- The active project state is the V1 model: DeepfakeDetector.
+- The active config is configs/model_config.yaml.
+- The active checkpoint is checkpoints/kaggle_realfake/best_model.pth.
+- The current stored project state says inference_mode is image, not video.
+- The repository also contains a larger V2 extension path, but context_summary.md says V2 migration is still gated until a trained V2 checkpoint exists.
+- So, for a report, the safest wording is:
+  "Our implemented and currently evaluated system is the V1 multimodal detector, while the repository also contains V2 research extensions for future work."
+
+CURRENT IMPLEMENTED SYSTEM (WHAT IS ACTUALLY ACTIVE NOW)
+- Model name: DeepfakeDetector
+- Main idea: combine spatial, frequency, temporal, physiological, and CLIP-aligned features for deepfake detection
+- Active modules listed in project_state.json:
+  spatial_encoder, frequency_encoder, temporal_model, physiology_encoder, clip_alignment, fusion, detection_head
+- Current evaluation snapshot:
+  accuracy = 0.90
+  AUC = 0.9496
+  optimal threshold = 0.162
+  calibrated temperature = 4.396576
+- Current active data state:
+  the trained checkpoint is under kaggle_realfake, while the latest held-out evaluation in project_state.json was run on test_data
+
+TECHNOLOGY STACK USED
+- Python
+  Why used: the whole training, inference, evaluation, and utility pipeline is written in Python.
+- PyTorch
+  Why used: deep learning framework for model definition, training, mixed precision, checkpointing, and inference.
+- timm
+  Why used: pretrained EfficientNet backbone loading.
+- open-clip-torch
+  Why used: CLIP visual encoder for representation alignment.
+- OpenCV
+  Why used: image loading, resizing, video frame sampling, DCT transform, and heatmap writing.
+- albumentations
+  Why used: image augmentation and preprocessing.
+- facenet-pytorch
+  Why used: MTCNN face detection in datasets and FaceNet/InceptionResnetV1 fallback for identity-related modules.
+- scikit-learn
+  Why used: evaluation metrics such as ROC AUC and calibration-style analysis utilities.
+- TensorBoard
+  Why used: training logs.
+- Gradio
+  Why used: demo UI.
+- YAML
+  Why used: configuration management.
+- FAISS
+  Why used in V2 only: retrieval-augmented artifact lookup.
+
+ACTIVE V1 METHODS AND MODELS, WITH WHY THEY WERE USED
+
+1. Spatial artifact encoder
+- What was used:
+  EfficientNet-B0 on RGB face images.
+- Where in code:
+  models/spatial_encoder.py
+  models/detector.py
+- Why it was used:
+  EfficientNet-B0 gives a strong accuracy-to-compute tradeoff, which matches the project goal of running on an RTX 4050 with 6 GB VRAM.
+- Report-ready wording:
+  "We used a pretrained EfficientNet-B0 spatial encoder to learn visual forgery artifacts such as blending inconsistencies, texture distortions, and local appearance anomalies from face crops."
+
+2. Frequency-domain encoder
+- What was used:
+  A second EfficientNet-B0 processes DCT-transformed input.
+- Where in code:
+  models/frequency_encoder.py
+  datasets/transforms.py
+- Why it was used:
+  Deepfake generation and compression often leave detectable traces in the frequency domain even when RGB artifacts are visually subtle.
+- Report-ready wording:
+  "We used a DCT-based frequency branch to capture compression and synthesis artifacts that may not be obvious in the spatial domain."
+
+3. DCT preprocessing
+- What was used:
+  Block-wise 8x8 DCT on YCrCb channels, followed by normalization and resizing.
+- Where in code:
+  datasets/transforms.py
+  datasets/base_dataset.py
+  datasets/kaggle_realfake.py
+- Why it was used:
+  DCT is a standard way to expose frequency irregularities linked to manipulated or heavily compressed images.
+- Report-ready wording:
+  "We converted face images into frequency coefficients using an 8x8 block DCT to explicitly model frequency artifacts."
+
+4. Temporal modeling
+- What was used:
+  Video Swin Transformer Tiny.
+- Where in code:
+  models/temporal_model.py
+  models/detector.py
+- Why it was used:
+  Deepfake videos can show frame-to-frame inconsistencies in expression, rendering, or motion that are harder to detect from a single image.
+- Important note for report:
+  The temporal path is implemented, but the current stored inference mode is image mode.
+- Report-ready wording:
+  "For video analysis, the architecture includes a Video Swin Transformer Tiny to model temporal inconsistency across sampled frames."
+
+5. Physiological consistency modeling
+- What was used:
+  A BiLSTM over a simple green-channel PPG-like signal extracted from video frames.
+- Where in code:
+  models/physiology_encoder.py
+- Why it was used:
+  Real videos contain weak biological rhythms and temporal color variations that can be disrupted by synthetic generation.
+- Important note for report:
+  This is part of the architecture, but it matters only for video mode.
+- Report-ready wording:
+  "We included a lightweight physiological encoder that analyzes green-channel temporal variations as a proxy for biological consistency."
+
+6. CLIP alignment module
+- What was used:
+  Frozen CLIP ViT-B/32 visual encoder plus a learnable projection/alignment head.
+- Where in code:
+  models/clip_alignment.py
+  models/detector.py
+- Why it was used:
+  The goal is better generalization to unseen generators by aligning learned detector features with broader pretrained visual representations.
+- Report-ready wording:
+  "We aligned detector features with a frozen CLIP visual encoder to improve transferability and robustness to unseen deepfake generators."
+
+7. Cross-attention multimodal fusion
+- What was used:
+  Cross-attention between spatial and frequency features, then fusion with temporal features, plus concatenation of physiology and CLIP features.
+- Where in code:
+  models/fusion.py
+- Why it was used:
+  Different modalities capture different forgery signals, so fusion lets the model combine complementary evidence instead of relying on a single branch.
+- Report-ready wording:
+  "We fused multimodal evidence using cross-attention so that spatial and frequency cues could inform each other before final decision making."
+
+8. Multi-task detection head
+- What was used:
+  One shared head outputs:
+  binary real/fake score,
+  manipulation-type prediction,
+  confidence score.
+- Where in code:
+  models/detection_head.py
+- Why it was used:
+  Multi-task learning can encourage richer feature learning and provides more informative outputs than only a binary label.
+- Report-ready wording:
+  "The prediction head jointly performs binary detection, manipulation-type classification, and confidence estimation."
+
+9. Multi-task training loss
+- What was used:
+  BCE for real/fake,
+  cross-entropy for manipulation type,
+  CLIP alignment loss,
+  confidence consistency loss.
+- Where in code:
+  training/losses.py
+- Why it was used:
+  This encourages the model to optimize detection accuracy while also learning manipulation-aware and representation-aware features.
+- Report-ready wording:
+  "Training used a multi-component objective combining binary classification loss, manipulation-type loss, CLIP alignment loss, and confidence regularization."
+
+10. Face extraction and preprocessing
+- What was used:
+  MTCNN-based face detection where available, otherwise resize fallback.
+- Where in code:
+  datasets/base_dataset.py
+- Why it was used:
+  Cropping to the face region helps the model focus on the area where most facial manipulations occur.
+- Report-ready wording:
+  "We used face-centered preprocessing to reduce background noise and focus the detector on manipulation-relevant facial regions."
+
+11. Data augmentation
+- What was used:
+  resize, horizontal flip, small rotation, JPEG compression, Gaussian blur, Gaussian noise, color jitter, coarse dropout, normalization.
+- Where in code:
+  datasets/transforms.py
+- Why it was used:
+  To improve robustness to real-world perturbations and avoid overfitting to clean training conditions.
+- Report-ready wording:
+  "We applied compression, blur, noise, geometric, and photometric augmentations to improve robustness under realistic image degradations."
+
+12. Training strategy
+- What was used:
+  AdamW optimizer,
+  cosine LR scheduling,
+  warmup,
+  gradient accumulation,
+  AMP mixed precision,
+  gradient checkpointing,
+  early stopping.
+- Where in code:
+  training/trainer.py
+  configs/config.yaml
+- Why it was used:
+  To make multimodal training stable and feasible on limited GPU memory.
+- Report-ready wording:
+  "We used memory-aware training with AdamW, mixed precision, gradient accumulation, and checkpointing to fit the model on limited hardware."
+
+13. Probability calibration
+- What was used:
+  Temperature scaling on the binary logit and a calibrated decision threshold.
+- Where in code:
+  calibration.py
+  checkpoints/kaggle_realfake/calibration.json
+- Why it was used:
+  Raw neural probabilities are often miscalibrated, so calibration gives more reliable confidence scores and a better threshold than the default 0.5.
+- Report-ready wording:
+  "We applied post-hoc temperature scaling and threshold tuning to improve probability calibration and decision reliability."
+
+14. Explainability
+- What was used:
+  GradCAM heatmaps and structured forensic report generation.
+- Where in code:
+  explainability/gradcam.py
+  explainability/forensic_report.py
+- Why it was used:
+  To make predictions more interpretable and to visualize which facial regions influenced the decision.
+- Report-ready wording:
+  "We added explainability through GradCAM-based artifact localization and report generation for more transparent predictions."
+
+DATASETS USED OR SUPPORTED
+- Kaggle Real-vs-Fake
+  Role in this project:
+  this is the dataset tied to the active checkpoint path and current image-mode training/testing flow.
+- FaceForensics++
+  Role in this project:
+  implemented in dataset loaders and training scripts for staged deepfake training.
+- Celeb-DF
+  Role in this project:
+  implemented as a supported evaluation/training dataset for stronger realism and cross-dataset testing.
+- DFDC
+  Role in this project:
+  implemented as another supported benchmark dataset.
+
+IMPORTANT REPORT NUANCE
+- If you want to be fully accurate, do not say:
+  "the deployed model currently uses all video and V2 modules in production"
+- A safer statement is:
+  "the codebase implements a multimodal architecture with image and video branches; the currently stored active evaluation state is image mode using the V1 detector, while the repository also contains extended V2 research modules for future experiments."
+
+V2 / FUTURE-WORK MODULES PRESENT IN THE REPOSITORY
+- These are implemented in the repo, but they are not the currently active trained checkpoint according to context_summary.md and project_state.json.
+
+1. Multi-spectral analysis
+- Added modules:
+  FFT branch, wavelet branch, SRM-style noise residual branch, and spectral combiner.
+- Where:
+  models/spectral_branches.py
+- Why:
+  to capture a richer set of frequency and residual artifacts than DCT alone.
+
+2. Identity consistency encoder
+- Added modules:
+  FaceNet/ArcFace-style identity embeddings and temporal identity stability scoring.
+- Where:
+  models/identity_encoder.py
+- Why:
+  identity flicker or inconsistency across frames can be a strong signal of face manipulation.
+
+3. Retrieval-augmented detection
+- Added modules:
+  FAISS-based artifact retrieval and context fusion.
+- Where:
+  models/rag_retrieval.py
+- Why:
+  to compare a query sample against known artifact patterns and inject retrieved evidence into detection.
+
+4. Transformer-based multimodal fusion
+- Added modules:
+  8-token transformer fusion.
+- Where:
+  models/fusion_transformer.py
+- Why:
+  to model deeper interactions across modalities than simple concatenation.
+
+5. Extended prediction heads
+- Added modules:
+  generator attribution and extended detection head.
+- Why:
+  to predict not only fake/real but also likely manipulation or generator family.
+
+6. Uncertainty estimation
+- Added modules:
+  Monte Carlo dropout and calibration metrics.
+- Where:
+  models/uncertainty.py
+- Why:
+  to estimate epistemic uncertainty at inference time.
+
+7. Self-supervised pretraining
+- Added modules:
+  DINO pretraining script.
+- Where:
+  scripts/pretrain_dino.py
+- Why:
+  to improve feature quality before supervised deepfake training.
+
+8. Adversarial robustness transforms
+- Added modules:
+  extra robustness augmentations for harder training.
+- Where:
+  datasets/adversarial_transforms.py
+- Why:
+  to improve generalization under stronger perturbations.
+
+PAPERS YOU CAN CITE IN THE PROJECT REPORT
+
+A. PAPERS DIRECTLY SUPPORTING THE ACTIVE V1 DESIGN
+
+1. EfficientNet backbone
+- Title: EfficientNet: Rethinking Model Scaling for Convolutional Neural Networks
+- Why it is relevant:
+  supports the choice of EfficientNet-B0 for both spatial and frequency branches.
+- Link:
+  https://arxiv.org/abs/1905.11946
+
+2. Video transformer backbone
+- Title: Video Swin Transformer
+- Why it is relevant:
+  supports the temporal branch used for video consistency modeling.
+- Link:
+  https://arxiv.org/abs/2106.13230
+
+3. CLIP backbone
+- Title: Learning Transferable Visual Models From Natural Language Supervision
+- Why it is relevant:
+  supports the CLIP-based feature alignment used for better transferability.
+- Link:
+  https://arxiv.org/abs/2103.00020
+
+4. Calibration
+- Title: On Calibration of Modern Neural Networks
+- Why it is relevant:
+  this is the standard reference for temperature scaling, which your project explicitly uses.
+- Link:
+  https://arxiv.org/abs/1706.04599
+
+5. Explainability
+- Title: Grad-CAM: Visual Explanations from Deep Networks via Gradient-based Localization
+- Why it is relevant:
+  supports the heatmap explainability step used in inference.
+- Link:
+  https://arxiv.org/abs/1610.02391
+
+6. Face detection / alignment
+- Title: Joint Face Detection and Alignment using Multi-task Cascaded Convolutional Networks
+- Why it is relevant:
+  supports the MTCNN-based face extraction used in the dataset pipeline.
+- Link:
+  https://arxiv.org/abs/1604.02878
+
+7. Face representation learning
+- Title: FaceNet: A Unified Embedding for Face Recognition and Clustering
+- Why it is relevant:
+  useful for explaining the identity embedding idea used in the V2 identity module.
+- Link:
+  https://arxiv.org/abs/1503.03832
+
+8. Face recognition margin loss
+- Title: ArcFace: Additive Angular Margin Loss for Deep Face Recognition
+- Why it is relevant:
+  useful for discussing the identity-consistency direction in the V2 branch.
+- Link:
+  https://arxiv.org/abs/1801.07698
+
+B. DEEPFAKE-SPECIFIC PAPERS THAT STRONGLY MATCH YOUR PROJECT IDEAS
+
+1. Frequency-domain deepfake detection
+- Title: Spatial-Phase Shallow Learning: Rethinking Face Forgery Detection in Frequency Domain
+- Why it is relevant:
+  strongly supports the use of frequency features such as DCT, FFT, and phase-aware analysis for forged-face detection.
+- Link:
+  https://arxiv.org/abs/2103.01856
+
+2. Multimodal transformer deepfake detection
+- Title: M2TR: Multi-modal Multi-scale Transformers for Deepfake Detection
+- Why it is relevant:
+  closely matches your multimodal fusion and transformer-based future direction.
+- Link:
+  https://arxiv.org/abs/2104.09770
+
+3. Biological signal based detection
+- Title: FakeCatcher: Detection of Synthetic Portrait Videos using Biological Signals
+- Why it is relevant:
+  this is the strongest paper match for your physiology encoder.
+- Link:
+  https://arxiv.org/abs/1901.02212
+
+4. Identity-consistency based detection
+- Title: Protecting Celebrities from DeepFake with Identity Consistency Transformer
+- Why it is relevant:
+  this is the strongest paper match for your V2 identity-consistency module.
+- Link:
+  https://arxiv.org/abs/2203.01318
+
+5. CLIP / VLM based universal deepfake detection
+- Title: CLIPping the Deception: Adapting Vision-Language Models for Universal Deepfake Detection
+- Why it is relevant:
+  closely matches your use of CLIP for generator-robust deepfake detection.
+- Link:
+  https://arxiv.org/abs/2402.12927
+
+6. Dataset paper for FaceForensics++
+- Title: FaceForensics++: Learning to Detect Manipulated Facial Images
+- Why it is relevant:
+  your code explicitly supports FaceForensics++ and uses the same manipulation categories.
+- Link:
+  https://arxiv.org/abs/1901.08971
+
+7. Dataset paper for Celeb-DF
+- Title: Celeb-DF: A Large-scale Challenging Dataset for DeepFake Forensics
+- Why it is relevant:
+  your code explicitly supports Celeb-DF and it is a common benchmark for realistic deepfake evaluation.
+- Link:
+  https://arxiv.org/abs/1909.12962
+
+8. Dataset paper for DFDC
+- Title: The Deepfake Detection Challenge (DFDC) Preview Dataset
+- Why it is relevant:
+  your code explicitly supports DFDC.
+- Link:
+  https://arxiv.org/abs/1910.08854
+
+C. PAPERS MOST RELEVANT TO THE V2 EXTENSION / FUTURE WORK
+
+1. Self-supervised pretraining
+- Title: Emerging Properties in Self-Supervised Vision Transformers
+- Why it is relevant:
+  supports the DINO-style self-supervised pretraining script included in the repo.
+- Link:
+  https://arxiv.org/abs/2104.14294
+
+2. Retrieval back end
+- Title: Billion-scale similarity search with GPUs
+- Why it is relevant:
+  this is the standard FAISS reference for your retrieval-augmented artifact database idea.
+- Link:
+  https://arxiv.org/abs/1702.08734
+
+SHORT CITATION STRATEGY FOR YOUR REPORT
+- If your report is short, cite these first:
+  EfficientNet
+  Video Swin Transformer
+  CLIP
+  FakeCatcher
+  M2TR
+  FaceForensics++
+  Celeb-DF
+  DFDC
+  On Calibration of Modern Neural Networks
+  Grad-CAM
+
+- If you want a stronger "future work / novelty" section, also add:
+  Spatial-Phase Shallow Learning
+  Protecting Celebrities from DeepFake with Identity Consistency Transformer
+  CLIPping the Deception
+  Emerging Properties in Self-Supervised Vision Transformers
+  Billion-scale similarity search with GPUs
+
+SAFE ONE-PARAGRAPH REPORT SUMMARY YOU CAN REUSE
+- "Our project implements a multimodal deepfake detection pipeline built primarily in PyTorch. The active model combines an EfficientNet-B0 spatial encoder, a DCT-based EfficientNet-B0 frequency encoder, optional Video Swin temporal modeling, a lightweight physiological consistency encoder, CLIP-based representation alignment, cross-attention multimodal fusion, and a multi-task detection head for real/fake prediction, manipulation classification, and confidence estimation. The pipeline also includes face-centered preprocessing, augmentation, post-hoc temperature scaling, and GradCAM-based explainability. In addition to the active V1 system, the repository contains V2 research extensions such as FFT/wavelet/noise spectral branches, identity consistency modeling, retrieval-augmented detection, transformer fusion, uncertainty estimation, and self-supervised pretraining for future work."
+
+END NOTE
+- If you want, this file is already safe to use as a report outline.
+- The most important reporting distinction is:
+  active V1 system = implemented and evaluated now
+  V2 modules = implemented in repo as extensions / future work, but not the active trained checkpoint yet

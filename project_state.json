@@ -1,0 +1,73 @@
+{
+  "project": {
+    "name": "deepfake1",
+    "root": ".",
+    "updated_at": "2026-04-10T18:37:35+00:00"
+  },
+  "model_architecture": {
+    "active_variant": "DeepfakeDetector",
+    "summary_short": "EfficientNet-B0 spatial + DCT EfficientNet-B0 + Video Swin-T + BiLSTM physiology + CLIP + cross-attention fusion + detection head",
+    "active_modules": [
+      "spatial_encoder",
+      "frequency_encoder",
+      "temporal_model",
+      "physiology_encoder",
+      "clip_alignment",
+      "fusion",
+      "detection_head"
+    ],
+    "inference_mode": "image",
+    "config_path": "configs/model_config.yaml"
+  },
+  "dataset_info": {
+    "active_dataset": "test_data",
+    "data_root": "test_data",
+    "available_datasets": [
+      "kaggle_realfake"
+    ],
+    "mode": "image",
+    "image_size": 160,
+    "num_frames": 8
+  },
+  "training_parameters": {
+    "batch_size": 2,
+    "gradient_accumulation_steps": 8,
+    "learning_rate": 0.0001,
+    "weight_decay": 0.0001,
+    "num_epochs": 50,
+    "use_amp": true,
+    "device": "auto",
+    "num_workers": 0
+  },
+  "performance_metrics": {
+    "source": "testing:test_generalization",
+    "dataset": "test_data",
+    "mode": "image",
+    "accuracy": 0.92,
+    "auc": 0.982,
+    "optimal_threshold": 0.1341,
+    "threshold_0_5_accuracy": 0.92,
+    "blur_accuracy": 0.92,
+    "blur_auc": 0.9748,
+    "num_samples": 100,
+    "precision": null,
+    "recall": null,
+    "f1": null
+  },
+  "calibration_status": {
+    "enabled": true,
+    "status": "done",
+    "temperature": 4.396576,
+    "temperature_path": "checkpoints/kaggle_realfake/calibration.json",
+    "optimal_threshold": 0.1341
+  },
+  "checkpoint_paths": {
+    "active": "checkpoints/kaggle_realfake/best_model.pth",
+    "available": [
+      "checkpoints/kaggle_realfake/best_model.pth",
+      "checkpoints/kaggle_realfake/epoch_5.pth"
+    ]
+  },
+  "last_completed_step": "testing:test_generalization",
+  "notes": "test_generalization.py refreshed held-out metrics and blur robustness deltas"
+}

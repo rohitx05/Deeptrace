@@ -1,0 +1,17 @@
+﻿Loading model from checkpoints/kaggle_realfake/best_model.pth...
+
+--- Evaluating on Original Test Data ---
+Total images tested: 100
+Accuracy: 0.8400
+ROC AUC Score: 0.9784
+
+5 Sample Predictions:
+  File: real_0.jpg, True: REAL, Pred: REAL (Prob: 0.0000)
+  File: real_27.jpg, True: REAL, Pred: REAL (Prob: 0.0235)
+  File: real_45.jpg, True: REAL, Pred: REAL (Prob: 0.0002)
+  File: tpdne_18.jpg, True: FAKE, Pred: REAL (Prob: 0.0006)
+  File: tpdne_36.jpg, True: FAKE, Pred: REAL (Prob: 0.3846)
+
+--- Robustness Test: Gaussian Blur (5x5) ---
+Accuracy (Blurred): 0.8400 (Drop: 0.0000)
+ROC AUC  (Blurred): 0.9762 (Drop: 0.0022)
