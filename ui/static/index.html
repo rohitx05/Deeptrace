@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DeepTrace — AI Deepfake Detection</title>
+  <meta name="description" content="DeepTrace uses multi-modal neural analysis to detect deepfake images with explainable AI forensics." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <!-- ── Navbar ── -->
+  <nav class="navbar">
+    <div class="nav-brand">
+      <svg class="nav-logo" viewBox="0 0 32 32" fill="none">
+        <circle cx="16" cy="16" r="14" stroke="#00d4ff" stroke-width="1.5" opacity="0.4"/>
+        <circle cx="16" cy="16" r="7" stroke="#00d4ff" stroke-width="1.5"/>
+        <circle cx="16" cy="16" r="3" fill="#00d4ff"/>
+        <line x1="2" y1="16" x2="9" y2="16" stroke="#00d4ff" stroke-width="1.5"/>
+        <line x1="23" y1="16" x2="30" y2="16" stroke="#00d4ff" stroke-width="1.5"/>
+        <line x1="16" y1="2" x2="16" y2="9" stroke="#00d4ff" stroke-width="1.5"/>
+        <line x1="16" y1="23" x2="16" y2="30" stroke="#00d4ff" stroke-width="1.5"/>
+      </svg>
+      <span class="nav-title">Deep<span class="accent">Trace</span></span>
+    </div>
+    <div class="nav-links">
+      <a href="#" class="nav-link active">Analysis</a>
+      <a href="#" class="nav-link">Forensics</a>
+      <a href="#" class="nav-link">API</a>
+      <span class="nav-badge">v1.0 · 92% AUC</span>
+    </div>
+  </nav>
+
+  <!-- ── Background glow ── -->
+  <div class="bg-glow glow-1"></div>
+  <div class="bg-glow glow-2"></div>
+
+  <!-- ── Hero ── -->
+  <section class="hero">
+    <div class="hero-tag">MULTI-MODAL NEURAL FORENSICS</div>
+    <h1 class="hero-title">Detect.<span class="accent"> Analyze.</span><br>Expose.</h1>
+    <p class="hero-sub">EfficientNet-B0 spatial + DCT frequency + CLIP alignment<br>working together to uncover synthetic media.</p>
+  </section>
+
+  <!-- ── Main App ── -->
+  <main class="app-container" id="upload-section">
+
+    <!-- Media type selector -->
+    <div class="media-selector">
+      <div class="media-card active" id="tab-photo" onclick="selectMedia('photo')">
+        <div class="media-icon">📷</div>
+        <div class="media-label">Photo</div>
+        <div class="media-sub">Supported</div>
+        <div class="active-dot"></div>
+      </div>
+      <div class="media-card coming" id="tab-video" onclick="showComingSoon('Video')">
+        <div class="media-icon">🎬</div>
+        <div class="media-label">Video</div>
+        <div class="coming-badge">Coming Soon</div>
+      </div>
+      <div class="media-card coming" id="tab-audio" onclick="showComingSoon('Audio')">
+        <div class="media-icon">🎙️</div>
+        <div class="media-label">Audio</div>
+        <div class="coming-badge">Coming Soon</div>
+      </div>
+    </div>
+
+    <!-- Upload zone -->
+    <div class="upload-zone" id="upload-zone"
+         ondragover="event.preventDefault(); this.classList.add('drag-over')"
+         ondragleave="this.classList.remove('drag-over')"
+         ondrop="handleDrop(event)">
+      <input type="file" id="file-input" accept=".jpg,.jpeg,.png,.bmp,.webp" hidden onchange="handleFile(this.files[0])"/>
+      <div class="upload-icon">
+        <svg viewBox="0 0 64 64" fill="none">
+          <rect x="8" y="16" width="48" height="36" rx="4" stroke="currentColor" stroke-width="2"/>
+          <circle cx="24" cy="30" r="5" stroke="currentColor" stroke-width="2"/>
+          <path d="M8 42l14-12 10 9 8-7 16 13" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M32 8v16M26 12l6-4 6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <p class="upload-title" id="upload-label">Drag &amp; drop image here</p>
+      <p class="upload-sub">or <span class="link" onclick="document.getElementById('file-input').click()">browse files</span> · JPG, PNG, BMP, WEBP</p>
+      <div class="scan-line" id="scan-line"></div>
+    </div>
+
+    <!-- Analyze button -->
+    <button class="btn-analyze" id="analyze-btn" onclick="analyze()" disabled>
+      <span class="btn-icon">⬡</span> Run Analysis
+    </button>
+
+    <!-- Loading state -->
+    <div class="analyzing-overlay" id="analyzing-overlay" style="display:none">
+      <div class="analyzing-box">
+        <div class="pulse-ring"></div>
+        <div class="analyzing-icon">🔬</div>
+        <div class="analyzing-text">Analyzing image...</div>
+        <div class="analyzing-sub">Running spatial + frequency + CLIP encoders</div>
+        <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ── Results Panel ── -->
+  <section class="results-section" id="results-section" style="display:none">
+    <div class="results-grid">
+
+      <!-- Left: Image panels -->
+      <div class="results-left">
+        <div class="panel glass">
+          <div class="panel-label">ORIGINAL IMAGE</div>
+          <img id="orig-img" class="result-img" src="" alt="Original"/>
+        </div>
+        <div class="panel glass">
+          <div class="panel-label">GRADCAM HEATMAP</div>
+          <img id="heatmap-img" class="result-img" src="" alt="Heatmap"/>
+          <div class="heatmap-legend">
+            <span class="legend-low">Low</span>
+            <div class="legend-bar"></div>
+            <span class="legend-high">High</span>
+            <span class="legend-label">Manipulation Probability</span>
+          </div>
+        </div>
+        <div class="panel glass meta-panel">
+          <div class="meta-row"><span class="meta-key">FILE</span><span class="meta-val mono" id="meta-filename">—</span></div>
+          <div class="meta-row"><span class="meta-key">MODEL</span><span class="meta-val mono">EfficientNet-B0 + CLIP</span></div>
+          <div class="meta-row"><span class="meta-key">THRESHOLD</span><span class="meta-val mono" id="meta-threshold">—</span></div>
+        </div>
+      </div>
+
+      <!-- Right: Results -->
+      <div class="results-right">
+
+        <!-- Verdict -->
+        <div class="verdict-card glass" id="verdict-card">
+          <div class="verdict-badge" id="verdict-badge">—</div>
+          <div class="verdict-prob" id="verdict-prob">—</div>
+          <div class="verdict-label">FAKE PROBABILITY</div>
+        </div>
+
+        <!-- Confidence gauge -->
+        <div class="panel glass gauge-panel">
+          <div class="gauge-label">MODEL CONFIDENCE</div>
+          <div class="gauge-wrap">
+            <svg class="gauge-svg" viewBox="0 0 140 80">
+              <path d="M10 70 A60 60 0 0 1 130 70" fill="none" stroke="#1e253b" stroke-width="12" stroke-linecap="round"/>
+              <path d="M10 70 A60 60 0 0 1 130 70" fill="none" stroke="url(#ggrad)" stroke-width="12" stroke-linecap="round"
+                    stroke-dasharray="188.5" id="gauge-arc" stroke-dashoffset="188.5"/>
+              <defs>
+                <linearGradient id="ggrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#00d4ff"/>
+                  <stop offset="100%" stop-color="#9f8eff"/>
+                </linearGradient>
+              </defs>
+            </svg>
+            <div class="gauge-value" id="gauge-value">—%</div>
+          </div>
+        </div>
+
+        <!-- Stats grid -->
+        <div class="stats-grid">
+          <div class="stat-card glass">
+            <div class="stat-val accent" id="stat-fake-prob">—</div>
+            <div class="stat-key">FAKE PROBABILITY</div>
+          </div>
+          <div class="stat-card glass">
+            <div class="stat-val" id="stat-confidence">—</div>
+            <div class="stat-key">MODEL CONFIDENCE</div>
+          </div>
+          <div class="stat-card glass">
+            <div class="stat-val purple" id="stat-manip">—</div>
+            <div class="stat-key">MANIPULATION TYPE</div>
+          </div>
+          <div class="stat-card glass">
+            <div class="stat-val" id="stat-threshold">—</div>
+            <div class="stat-key">DECISION THRESHOLD</div>
+          </div>
+        </div>
+
+        <!-- Forensic justification -->
+        <div class="panel glass forensic-panel">
+          <div class="panel-label">FORENSIC JUSTIFICATION</div>
+          <p class="forensic-text" id="forensic-text">—</p>
+        </div>
+
+        <!-- Actions -->
+        <div class="actions-row">
+          <button class="btn-secondary" onclick="resetApp()">← Analyze Another</button>
+          <button class="btn-secondary" onclick="copyReport()">📋 Copy Report</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Coming Soon Modal ── -->
+  <div class="modal-overlay" id="modal-overlay" onclick="closeModal()" style="display:none">
+    <div class="modal-box glass" onclick="event.stopPropagation()">
+      <div class="modal-icon" id="modal-icon">🎬</div>
+      <h2 class="modal-title" id="modal-title">Video Analysis</h2>
+      <p class="modal-sub">Video deepfake detection is currently in development.<br>
+      Temporal analysis with Video Swin-T + BiLSTM is coming soon.</p>
+      <div class="modal-features">
+        <div class="feature-item">⚡ Frame-by-frame GradCAM</div>
+        <div class="feature-item">🧠 BiLSTM physiological signals</div>
+        <div class="feature-item">📊 Temporal consistency scoring</div>
+      </div>
+      <button class="btn-analyze" style="margin-top:1.5rem" onclick="closeModal()">Got it</button>
+    </div>
+  </div>
+
+  <!-- ── Footer ── -->
+  <footer class="footer">
+    <span>DeepTrace · Research Prototype</span>
+    <span class="footer-sep">·</span>
+    <span>EfficientNet-B0 · DCT · CLIP ViT-B/32 · GradCAM</span>
+    <span class="footer-sep">·</span>
+    <span>Accuracy 92% · AUC 0.982</span>
+  </footer>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

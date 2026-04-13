@@ -73,8 +73,10 @@ class InferencePipeline:
         if self.calibration_path.exists():
             calib = load_calibration_dict(str(self.calibration_path))
             self.model.set_temperature_value(calib["temperature"])
-            if "optimal_threshold" in calib:
-                self.threshold = calib["optimal_threshold"]
+            # Accept either key name (calibration.json uses "threshold", some old files use "optimal_threshold")
+            thr = calib.get("threshold") or calib.get("optimal_threshold")
+            if thr is not None:
+                self.threshold = float(thr)
             self.calibration_loaded = True
             logger.info(
                 "Loaded calibration: T=%.6f threshold=%.4f from %s",
@@ -143,29 +145,91 @@ class InferencePipeline:
 
     @torch.no_grad()
     def _predict_image(self, path: str, return_logits: bool = False) -> dict:
-        """Predict on a single image."""
+        """Predict on a single image with TTA (test-time augmentation)."""
         image = cv2.imread(str(path))
         if image is None:
             return {"error": f"Could not read image: {path}"}
 
-        # Preprocess
+        # ── Preprocess ─────────────────────────────────────────────────────────
         face = cv2.resize(image, (self.image_size, self.image_size))
-        rgb = cv2.cvtColor(face, cv2.COLOR_BGR2RGB)
-        dct = apply_dct_transform(face)
+        rgb  = cv2.cvtColor(face, cv2.COLOR_BGR2RGB)
+        dct  = apply_dct_transform(face)
 
-        # Transform
-        augmented = self.transform(image=rgb)
-        tensor = augmented["image"].unsqueeze(0).to(self.device)
-
-        dct_normalized = (dct - dct.mean()) / (dct.std() + 1e-8)
-        dct_tensor = torch.from_numpy(dct_normalized).permute(2, 0, 1).float()
+        dct_norm   = (dct - dct.mean()) / (dct.std() + 1e-8)
+        dct_tensor = torch.from_numpy(dct_norm).permute(2, 0, 1).float()
         dct_tensor = torch.nn.functional.interpolate(
-            dct_tensor.unsqueeze(0), size=(self.image_size, self.image_size), mode="bilinear"
-        ).to(self.device)
+            dct_tensor.unsqueeze(0), size=(self.image_size, self.image_size),
+            mode="bilinear", align_corners=False,
+        ).squeeze(0)
 
-        # Predict
-        with torch.amp.autocast("cuda", enabled=self.use_amp):
-            predictions = self.model(images=tensor, dct=dct_tensor, mode="image")
+        # ── TTA: original + horizontal flip ────────────────────────────────────
+        # Use AMP (matching training conditions so CLIP stays in FP16 as expected).
+        # Immediately cast binary_pred to float32 to prevent NaN propagation.
+        # ModelWithTemperature already returns binary_pred = sigmoid(logit / T)
+        # so there is NO double-temperature application here.
+        all_probs  = []
+        last_preds = None
+
+        for flip in (False, True):
+            aug_rgb  = rgb[:, ::-1, :].copy() if flip else rgb
+            aug_dct  = dct_tensor.flip(-1) if flip else dct_tensor
+
+            augmented = self.transform(image=aug_rgb)
+            tensor    = augmented["image"].unsqueeze(0).to(self.device)
+            d_tensor  = aug_dct.unsqueeze(0).to(self.device)
+
+            # Primary: run under AMP (matches training/calibration)
+            with torch.amp.autocast("cuda", enabled=self.use_amp):
+                preds = self.model(images=tensor, dct=d_tensor, mode="image")
+
+            # Cast to float32 immediately, then check for NaN
+            prob_fp32 = preds["binary_pred"].float()  # (1,)
+
+            if torch.isnan(prob_fp32).any() or torch.isinf(prob_fp32).any():
+                logger.warning(f"NaN/Inf in binary_pred (flip={flip}) — retrying in float32")
+                with torch.amp.autocast("cuda", enabled=False):
+                    preds = self.model(
+                        images=tensor.float(), dct=d_tensor.float(), mode="image"
+                    )
+                prob_fp32 = preds["binary_pred"].float()
+
+            all_probs.append(prob_fp32)
+            last_preds = preds
+
+        # ── Average TTA probabilities ───────────────────────────────────────────
+        avg_prob = torch.stack(all_probs).mean(dim=0)
+        prob_val = float(avg_prob.item())
+
+        # ── Confidence: distance from threshold ────────────────────────────────
+        thr = self.threshold
+        if prob_val > thr:
+            conf = (prob_val - thr) / max(1.0 - thr, 1e-8)
+        else:
+            conf = (thr - prob_val) / max(thr, 1e-8)
+        conf = max(0.0, min(1.0, conf))
+
+        # ── Manipulation class: argmax over multi-class head ───────────────────
+        manip_out = last_preds["manipulation_pred"]
+        if manip_out.ndim > 1 and manip_out.size(-1) > 1:
+            manip_idx = int(manip_out.argmax(dim=-1).item())
+        else:
+            manip_idx = int(manip_out.round().clamp(0, len(MANIPULATION_LABELS) - 1).item())
+
+        # ── Debug log (visible in terminal) ────────────────────────────────────
+        verdict = "FAKE" if prob_val > thr else "REAL"
+        raw_logit_val = float(last_preds["binary_logit"].item()) if "binary_logit" in last_preds else float("nan")
+        logger.info(
+            f"[INFERENCE] raw_logit={raw_logit_val:.4f} | prob={prob_val:.4f} | "
+            f"thr={thr:.4f} | verdict={verdict} | conf={conf*100:.1f}% | manip={MANIPULATION_LABELS[manip_idx]}"
+        )
+
+        predictions = {
+            "binary_logit":        last_preds.get("binary_logit", avg_prob),
+            "scaled_binary_logit": last_preds.get("scaled_binary_logit", avg_prob),
+            "binary_pred":         avg_prob,
+            "confidence":          torch.tensor(conf),
+            "manipulation_pred":   torch.tensor(manip_idx),
+        }
 
         return self._format_result(predictions, path, return_logits=return_logits)
 
@@ -219,9 +283,23 @@ class InferencePipeline:
 
     def _format_result(self, predictions: dict, path: str, return_logits: bool = False) -> dict:
         """Format model output into a human-readable result."""
-        prob = predictions["binary_pred"].item()
+        import math
+        prob = float(predictions["binary_pred"].item())
+        # Guard against NaN/Inf from unstable logits
+        if math.isnan(prob) or math.isinf(prob):
+            prob = 0.5
+        prob = max(0.0, min(1.0, prob))  # clamp to [0, 1]
+
         manip_idx = predictions["manipulation_pred"].item()
-        confidence = predictions["confidence"].item()
+        # Guard: manip_pred may be a float tensor (argmax not applied) → round and clamp
+        if isinstance(manip_idx, float):
+            manip_idx = int(round(manip_idx))
+        manip_idx = max(0, min(manip_idx, len(MANIPULATION_LABELS) - 1))
+
+        confidence = float(predictions["confidence"].item())
+        if math.isnan(confidence) or math.isinf(confidence):
+            confidence = abs(prob - 0.5) * 2.0  # recompute from prob
+
         result = {
             "file": str(path),
             "prediction": "FAKE" if prob > self.threshold else "REAL",

@@ -37,3 +37,20 @@ logs/
 *.egg-info/
 dist/
 build/
+
+# Large wheel files (CUDA wheels, etc.)
+*.whl
+
+# Environment & secrets — NEVER commit these
+.env
+.env.*
+*.env
+*_secret*
+*api_key*
+secrets.py
+config_secret.py
+
+# OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
