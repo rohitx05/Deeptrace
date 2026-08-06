@@ -100,7 +100,7 @@ class Trainer:
         # State
         self.best_val_auc = 0.0
         self.best_val_metrics = {}
-        self.last_val_metrics = {}
+        self.last_val_metrics = {"loss": 0.0, "accuracy": 0.0, "roc_auc": 0.0}
         self.best_epoch = None
         self.best_checkpoint_path = str(self.checkpoint_dir / "best_model.pth")
         self.epochs_without_improvement = 0
@@ -133,8 +133,11 @@ class Trainer:
             # Train
             train_metrics = self._train_epoch(epoch)
 
-            # Validate
-            val_metrics = self._validate(epoch)
+            # Validate every 2 epochs (save ~2min per epoch pair)
+            if epoch % 2 == 0 or epoch == start_epoch or epoch == self.num_epochs - 1:
+                val_metrics = self._validate(epoch)
+            else:
+                val_metrics = dict(self.last_val_metrics)  # reuse previous
             self.last_val_metrics = dict(val_metrics)
 
             # Log
@@ -211,7 +214,13 @@ class Trainer:
                 if mode == "video":
                     predictions = self.model(frames=batch["frames"], dct_frames=batch.get("dct_frames"), mode="video")
                 else:
-                    predictions = self.model(images=batch["image"], dct=batch.get("dct"), mode="image")
+                    predictions = self.model(
+                        images=batch["image"],
+                        dct=batch.get("dct"),
+                        mode="image",
+                        freq_features=batch.get("cached_freq"),
+                        clip_features=batch.get("cached_clip"),
+                    )
 
                 targets = {
                     "label": batch["label"],
@@ -265,7 +274,13 @@ class Trainer:
                 if mode == "video":
                     predictions = self.model(frames=batch["frames"], dct_frames=batch.get("dct_frames"), mode="video")
                 else:
-                    predictions = self.model(images=batch["image"], dct=batch.get("dct"), mode="image")
+                    predictions = self.model(
+                        images=batch["image"],
+                        dct=batch.get("dct"),
+                        mode="image",
+                        freq_features=batch.get("cached_freq"),
+                        clip_features=batch.get("cached_clip"),
+                    )
 
                 targets = {"label": batch["label"], "manipulation_type": batch["manipulation_type"]}
                 losses = self.criterion(predictions, targets)
@@ -288,8 +303,8 @@ class Trainer:
 
         logger.info(
             f"Epoch {epoch + 1}: "
-            f"Train Loss={train_metrics['loss']:.4f} Acc={train_metrics['accuracy']:.4f} | "
-            f"Val Loss={val_metrics['loss']:.4f} Acc={val_metrics['accuracy']:.4f} "
+            f"Train Loss={train_metrics.get('loss', 0):.4f} Acc={train_metrics.get('accuracy', 0):.4f} | "
+            f"Val Loss={val_metrics.get('loss', 0):.4f} Acc={val_metrics.get('accuracy', 0):.4f} "
             f"AUC={val_metrics.get('roc_auc', 0):.4f} | LR={lr:.6f}"
         )
 

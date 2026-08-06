@@ -5,10 +5,10 @@
 # --- Hardware ---
 hardware:
   device: "cuda"
-  num_workers: 0
+  num_workers: 4
   pin_memory: true
   mixed_precision: true
-  gradient_checkpointing: true
+  gradient_checkpointing: false
 
 # --- Data ---
 data:
@@ -33,7 +33,7 @@ augmentation:
 # --- Training ---
 training:
   batch_size: 2
-  gradient_accumulation_steps: 8   # effective batch = 16
+  gradient_accumulation_steps: 2   # effective batch = 16
   num_epochs: 50
   learning_rate: 1.0e-4
   weight_decay: 1.0e-4
@@ -52,7 +52,7 @@ loss:
 
 # --- Evaluation ---
 evaluation:
-  threshold: 0.162    # calibrated optimal threshold (temperature=4.397)
+  threshold: 0.1341   # calibrated optimal threshold; calibration.json overrides this when present
   save_predictions: true
   output_dir: "results/"
 

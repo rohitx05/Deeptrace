@@ -2,7 +2,7 @@
   "project": {
     "name": "deepfake1",
     "root": ".",
-    "updated_at": "2026-04-10T18:37:35+00:00"
+    "updated_at": "2026-06-17T22:48:17+00:00"
   },
   "model_architecture": {
     "active_variant": "DeepfakeDetector",
@@ -20,8 +20,8 @@
     "config_path": "configs/model_config.yaml"
   },
   "dataset_info": {
-    "active_dataset": "test_data",
-    "data_root": "test_data",
+    "active_dataset": "kaggle_realfake",
+    "data_root": "data/kaggle_realfake",
     "available_datasets": [
       "kaggle_realfake"
     ],
@@ -30,21 +30,22 @@
     "num_frames": 8
   },
   "training_parameters": {
-    "batch_size": 2,
-    "gradient_accumulation_steps": 8,
+    "batch_size": 16,
+    "gradient_accumulation_steps": 2,
     "learning_rate": 0.0001,
     "weight_decay": 0.0001,
     "num_epochs": 50,
     "use_amp": true,
-    "device": "auto",
-    "num_workers": 0
+    "device": "cuda",
+    "num_workers": 4,
+    "stage_name": "kaggle_realfake"
   },
   "performance_metrics": {
-    "source": "testing:test_generalization",
-    "dataset": "test_data",
+    "source": "training:kaggle_realfake",
+    "dataset": "kaggle_realfake",
     "mode": "image",
-    "accuracy": 0.92,
-    "auc": 0.982,
+    "accuracy": 0.9939,
+    "auc": 0.9998107250000001,
     "optimal_threshold": 0.1341,
     "threshold_0_5_accuracy": 0.92,
     "blur_accuracy": 0.92,
@@ -52,7 +53,9 @@
     "num_samples": 100,
     "precision": null,
     "recall": null,
-    "f1": null
+    "f1": null,
+    "loss": 0.0780427984125592,
+    "best_epoch": 12
   },
   "calibration_status": {
     "enabled": true,
@@ -64,10 +67,9 @@
   "checkpoint_paths": {
     "active": "checkpoints/kaggle_realfake/best_model.pth",
     "available": [
-      "checkpoints/kaggle_realfake/best_model.pth",
-      "checkpoints/kaggle_realfake/epoch_5.pth"
+      "checkpoints/kaggle_realfake/best_model.pth"
     ]
   },
-  "last_completed_step": "testing:test_generalization",
-  "notes": "test_generalization.py refreshed held-out metrics and blur robustness deltas"
+  "last_completed_step": "training:kaggle_realfake",
+  "notes": "kaggle_realfake training complete; best_val_auc=0.9998"
 }

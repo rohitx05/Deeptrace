@@ -133,52 +133,66 @@ class DeepfakeDetector(nn.Module):
         frames: torch.Tensor = None,
         dct_frames: torch.Tensor = None,
         mode: str = "image",
+        freq_features: torch.Tensor = None,
+        clip_features: torch.Tensor = None,
+        compute_clip_alignment_loss: bool = True,
     ) -> dict:
-        """
-        Forward pass supporting both image and video modes.
-
-        Image mode:
-            images: (B, 3, H, W)
-            dct: (B, 3, H, W)
-
-        Video mode:
-            frames: (B, T, 3, H, W)
-            dct_frames: (B, T, 3, H, W)
-
-        Returns:
-            dict with predictions + intermediate features
-        """
         if mode == "video" and frames is not None:
             return self._forward_video(frames, dct_frames)
         else:
-            return self._forward_image(images, dct)
+            return self._forward_image(
+                images,
+                dct,
+                freq_features,
+                clip_features,
+                compute_clip_alignment_loss=compute_clip_alignment_loss,
+            )
 
-    def _forward_image(self, images: torch.Tensor, dct: torch.Tensor = None) -> dict:
-        """Process a single image."""
-        # Spatial features
+    def _forward_image(
+        self,
+        images: torch.Tensor,
+        dct: torch.Tensor = None,
+        freq_features: torch.Tensor = None,
+        clip_features: torch.Tensor = None,
+        compute_clip_alignment_loss: bool = True,
+    ) -> dict:
+        """Process a single image. Uses cached features if provided (skips frozen encoders)."""
+        # Spatial features (always computed — trainable)
         spatial_features = self.spatial_encoder(images)  # (B, 1280)
 
-        # Frequency features
-        if dct is not None:
-            freq_features = self.frequency_encoder(dct)  # (B, 1280)
+        # Frequency features — use cache if available
+        if freq_features is not None:
+            freq_feats = freq_features.to(images.device)
+        elif dct is not None:
+            freq_feats = self.frequency_encoder(dct)  # (B, 1280)
         else:
-            freq_features = torch.zeros_like(spatial_features)
+            freq_feats = torch.zeros_like(spatial_features)
 
-        # CLIP alignment
-        clip_result = self.clip_alignment(spatial_features, images)
+        # CLIP alignment — use cache if available
+        if clip_features is not None:
+            clip_proj = clip_features.to(images.device)
+            clip_align_loss = torch.tensor(0.0, device=images.device)
+        else:
+            clip_result = self.clip_alignment(
+                spatial_features,
+                images,
+                compute_alignment_loss=compute_clip_alignment_loss,
+            )
+            clip_proj = clip_result["spatial_projected"]
+            clip_align_loss = clip_result["alignment_loss"]
 
-        # Fusion (no temporal or physiology for images)
+        # Fusion
         fused = self.fusion(
             spatial_features=spatial_features,
-            frequency_features=freq_features,
+            frequency_features=freq_feats,
             temporal_features=None,
             physiology_features=None,
-            clip_features=clip_result["spatial_projected"],
+            clip_features=clip_proj,
         )
 
         # Detection
         predictions = self.detection_head(fused)
-        predictions["clip_alignment_loss"] = clip_result["alignment_loss"]
+        predictions["clip_alignment_loss"] = clip_align_loss
         predictions["spatial_features"] = spatial_features
         predictions["fused_features"] = fused
 

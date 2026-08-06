@@ -11,11 +11,11 @@ paths:
   logs_dir: logs
   active_model_config: configs/model_config.yaml
 device_config:
-  device: auto
-  num_workers: 0
+  device: cuda
+  num_workers: 4
   pin_memory: true
 runtime:
-  batch_size: 2
+  batch_size: 16
   image_size: 160
   num_frames: 8
 flags:
