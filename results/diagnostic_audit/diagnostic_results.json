@@ -1,0 +1,24 @@
+{
+  "test3_logit_std": {
+    "nd_real_mean": -13.008430989583333,
+    "nd_real_std": 2.8034341481708873,
+    "nd_fake_mean": -12.737763671875,
+    "nd_fake_std": 2.6870179024733973
+  },
+  "test4_compression": {
+    "original_auc": 1.0,
+    "recompressed_auc": 1.0,
+    "auc_drop": 0.0
+  },
+  "test2_cross_source": {
+    "auc_nd_real_vs_kaggle_fake": 1.0
+  },
+  "test1_non_stylegan": {
+    "auc_kaggle_real_vs_nd_fake": 0.6669125
+  },
+  "test8_calibration": {
+    "raw_brier": 0.00015279895756336762,
+    "calib_brier": 0.0037363699734691757,
+    "explanation": "T=4.39 softens already-correct sharp predictions, increasing Brier. Expected on in-distribution data."
+  }
+}

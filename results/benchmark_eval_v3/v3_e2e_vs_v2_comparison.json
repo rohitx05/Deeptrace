@@ -1,0 +1,97 @@
+{
+  "evaluation_title": "DeepTrace V3-E2E vs. V2 and Literature Baselines",
+  "tested_checkpoint": "checkpoints/v3_e2e_multisource/best_model.pth",
+  "item1_gradcam_v3": [
+    {
+      "image": "data/kaggle_realfake/real_vs_fake/real-vs-fake/test/real/00001.jpg",
+      "desc": "authentic",
+      "true_label": 0,
+      "pred_prob": 3.2220478374256345e-07,
+      "output_overlay": "results\\gradcam_v3\\audit_gradcam_v3_authentic.png"
+    },
+    {
+      "image": "data/kaggle_realfake/real_vs_fake/real-vs-fake/test/fake/00276TOPP4.jpg",
+      "desc": "manipulated_stylegan",
+      "true_label": 1,
+      "pred_prob": 0.9994990825653076,
+      "output_overlay": "results\\gradcam_v3\\audit_gradcam_v3_manipulated_stylegan.png"
+    },
+    {
+      "image": "D:\\datasets\\ffpp_c23\\frames\\FaceSwap\\999_960_frame_0030.jpg",
+      "desc": "manipulated_ffpp_faceswap",
+      "true_label": 1,
+      "pred_prob": 0.5276355147361755,
+      "output_overlay": "results\\gradcam_v3\\audit_gradcam_v3_manipulated_ffpp_faceswap.png"
+    }
+  ],
+  "item2_and_3_calibration_and_metrics": {
+    "temperature_optimal": 1.3521432656998462,
+    "validation": {
+      "brier_raw": 0.0040110054260839535,
+      "brier_calibrated": 0.0038728317793911074
+    },
+    "test": {
+      "accuracy": 0.9967,
+      "roc_auc": 0.999901415,
+      "f1_score": 0.9967026378896883,
+      "brier_score_raw": 0.002791668734769321,
+      "brier_score_calibrated": 0.002675273376416392,
+      "confusion_matrix": [
+        [
+          9959,
+          41
+        ],
+        [
+          25,
+          9975
+        ]
+      ]
+    }
+  },
+  "side_by_side_in_domain_comparison": {
+    "MesoNet-4 (Afchar et al., 2018)": {
+      "accuracy": 0.8416,
+      "roc_auc": 0.9204,
+      "f1_score": 0.8406,
+      "brier_score": 0.1147
+    },
+    "XceptionNet (R\u00f6ssler et al., 2019)": {
+      "accuracy": 0.9834,
+      "roc_auc": 0.9998,
+      "f1_score": 0.9837,
+      "brier_score": 0.0123
+    },
+    "DeepTrace V2 (Kaggle In-Domain)": {
+      "accuracy": 0.998,
+      "roc_auc": 0.99995,
+      "f1_score": 0.998,
+      "brier_score": 0.00193
+    },
+    "DeepTrace V3-E2E (Unfrozen Multi-Source)": {
+      "accuracy": 0.9967,
+      "roc_auc": 0.999901415,
+      "f1_score": 0.9967026378896883,
+      "brier_score": 0.002675273376416392
+    }
+  },
+  "side_by_side_cross_dataset_ffpp": {
+    "Zero-Shot Baseline (V2 on FF++)": {
+      "accuracy": 0.1429,
+      "roc_auc": 0.5275,
+      "f1_score": 0.0,
+      "brier_score": 0.8571
+    },
+    "V3 Multi-Source (Frozen Backbones)": {
+      "accuracy": 0.8296,
+      "roc_auc": 0.5231,
+      "f1_score": 0.9062,
+      "brier_score": 0.2088
+    },
+    "V3-E2E Multi-Source (Unfrozen Backbones)": {
+      "accuracy": 0.8572142857142857,
+      "roc_auc": 0.47587310416666667,
+      "f1_score": 0.9231124274010539,
+      "brier_score": 0.23177410989148275
+    }
+  }
+}

@@ -8,6 +8,7 @@ datasets/
 test_data/
 results_test/
 inference_output/
+results/diagnostic_audit/recompressed_kaggle/
 
 # Model checkpoints (large binary files)
 checkpoints/
@@ -49,6 +50,9 @@ build/
 *api_key*
 secrets.py
 config_secret.py
+
+# Obsidian vault config (personal / machine-specific)
+.obsidian/
 
 # OS junk
 .DS_Store

@@ -1,0 +1,107 @@
+{
+  "parameter_reconciliation": {
+    "base_detector_total": 139749023,
+    "base_detector_trainable": 51899807,
+    "v7_model_total": 119684803,
+    "v7_model_trainable": 31835587,
+    "module_breakdown": {
+      "spatial_encoder": {
+        "total_params": 4007548,
+        "trainable_params": 4007548
+      },
+      "frequency_encoder": {
+        "total_params": 4007548,
+        "trainable_params": 4007548
+      },
+      "clip_alignment": {
+        "total_params": 88440064,
+        "trainable_params": 590848
+      },
+      "fusion": {
+        "total_params": 15008256,
+        "trainable_params": 15008256
+      },
+      "detection_head": {
+        "total_params": 214407,
+        "trainable_params": 214407
+      },
+      "spectral_combiner": {
+        "total_params": 8006980,
+        "trainable_params": 8006980
+      }
+    }
+  },
+  "calibrated_benchmarks": {
+    "DeepFakeDetection": {
+      "roc_auc": 1.0,
+      "accuracy_default_05": 0.5005,
+      "optimal_threshold_youden": 0.970703125,
+      "accuracy_optimal_threshold": 1.0,
+      "sensitivity_tpr": 1.0,
+      "specificity_tnr": 1.0,
+      "real_logit_mean": 0.66162109375,
+      "fake_logit_mean": 7.29296875,
+      "n_samples": 2000
+    },
+    "Deepfakes": {
+      "roc_auc": 0.7249245000000001,
+      "accuracy_default_05": 0.5005,
+      "optimal_threshold_youden": 0.6826171875,
+      "accuracy_optimal_threshold": 0.687,
+      "sensitivity_tpr": 0.408,
+      "specificity_tnr": 0.966,
+      "real_logit_mean": 0.66162109375,
+      "fake_logit_mean": 0.98779296875,
+      "n_samples": 2000
+    },
+    "FaceSwap": {
+      "roc_auc": 0.633993,
+      "accuracy_default_05": 0.5005,
+      "optimal_threshold_youden": 0.67138671875,
+      "accuracy_optimal_threshold": 0.5985,
+      "sensitivity_tpr": 0.408,
+      "specificity_tnr": 0.789,
+      "real_logit_mean": 0.66162109375,
+      "fake_logit_mean": 0.71044921875,
+      "n_samples": 2000
+    },
+    "FaceShifter": {
+      "roc_auc": 0.672018,
+      "accuracy_default_05": 0.5005,
+      "optimal_threshold_youden": 0.66943359375,
+      "accuracy_optimal_threshold": 0.631,
+      "sensitivity_tpr": 0.541,
+      "specificity_tnr": 0.721,
+      "real_logit_mean": 0.66162109375,
+      "fake_logit_mean": 0.71044921875,
+      "n_samples": 2000
+    },
+    "Face2Face": {
+      "roc_auc": 0.5793265000000001,
+      "accuracy_default_05": 0.5005,
+      "optimal_threshold_youden": 0.66455078125,
+      "accuracy_optimal_threshold": 0.562,
+      "sensitivity_tpr": 0.554,
+      "specificity_tnr": 0.5700000000000001,
+      "real_logit_mean": 0.66162109375,
+      "fake_logit_mean": 0.68505859375,
+      "n_samples": 2000
+    },
+    "NeuralTextures": {
+      "roc_auc": 0.571107,
+      "accuracy_default_05": 0.5005,
+      "optimal_threshold_youden": 0.6630859375,
+      "accuracy_optimal_threshold": 0.555,
+      "sensitivity_tpr": 0.582,
+      "specificity_tnr": 0.528,
+      "real_logit_mean": 0.66162109375,
+      "fake_logit_mean": 0.681640625,
+      "n_samples": 2000
+    }
+  },
+  "compression_shortcut_test": {
+    "clean_real_logit_mean": 0.66162109375,
+    "jpeg_compressed_real_logit_mean": 0.689150390625,
+    "conclusion": "JPEG compression shift shifts real logits upward, confirming compression sensitivity shortcut."
+  }
+}

@@ -1,0 +1,142 @@
+{
+  "model": "DeepTrace (v3_e2e_multisource)",
+  "checkpoint": "checkpoints/v3_e2e_multisource/best_model.pth",
+  "cohorts": {
+    "FaceSwap": {
+      "accuracy": 0.50025,
+      "roc_auc": 0.49096325,
+      "f1_score": 0.6667777962993833,
+      "brier_score": 0.25071445494890215,
+      "confusion_matrix": [
+        [
+          1,
+          1999
+        ],
+        [
+          0,
+          2000
+        ]
+      ],
+      "n_samples": 4000
+    },
+    "Deepfakes": {
+      "accuracy": 0.50025,
+      "roc_auc": 0.46859912499999995,
+      "f1_score": 0.6667777962993833,
+      "brier_score": 0.25076286029815675,
+      "confusion_matrix": [
+        [
+          1,
+          1999
+        ],
+        [
+          0,
+          2000
+        ]
+      ],
+      "n_samples": 4000
+    },
+    "Face2Face": {
+      "accuracy": 0.50025,
+      "roc_auc": 0.489939625,
+      "f1_score": 0.6667777962993833,
+      "brier_score": 0.25071502542495727,
+      "confusion_matrix": [
+        [
+          1,
+          1999
+        ],
+        [
+          0,
+          2000
+        ]
+      ],
+      "n_samples": 4000
+    },
+    "NeuralTextures": {
+      "accuracy": 0.50025,
+      "roc_auc": 0.48338224999999996,
+      "f1_score": 0.6667777962993833,
+      "brier_score": 0.25072533589601514,
+      "confusion_matrix": [
+        [
+          1,
+          1999
+        ],
+        [
+          0,
+          2000
+        ]
+      ],
+      "n_samples": 4000
+    },
+    "FaceShifter": {
+      "accuracy": 0.50025,
+      "roc_auc": 0.498029375,
+      "f1_score": 0.6667777962993833,
+      "brier_score": 0.2507041738033295,
+      "confusion_matrix": [
+        [
+          1,
+          1999
+        ],
+        [
+          0,
+          2000
+        ]
+      ],
+      "n_samples": 4000
+    },
+    "DeepFakeDetection": {
+      "accuracy": 0.50025,
+      "roc_auc": 0.42423050000000007,
+      "f1_score": 0.6667777962993833,
+      "brier_score": 0.2508583078980446,
+      "confusion_matrix": [
+        [
+          1,
+          1999
+        ],
+        [
+          0,
+          2000
+        ]
+      ],
+      "n_samples": 4000
+    }
+  },
+  "kaggle_in_domain": {
+    "accuracy": 0.9967,
+    "roc_auc": 0.99990436,
+    "f1_score": 0.9967026378896883,
+    "brier_score": 0.0027917389226015457,
+    "confusion_matrix": [
+      [
+        9959,
+        41
+      ],
+      [
+        25,
+        9975
+      ]
+    ],
+    "n_samples": 20000
+  },
+  "ffpp_overall": {
+    "accuracy": 0.8572142857142857,
+    "roc_auc": 0.47587310416666667,
+    "f1_score": 0.9231124274010539,
+    "brier_score": 0.23177410989148275,
+    "confusion_matrix": [
+      [
+        1,
+        1999
+      ],
+      [
+        0,
+        12000
+      ]
+    ],
+    "n_samples": 14000
+  }
+}

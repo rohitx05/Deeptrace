@@ -46,11 +46,18 @@ def load_checkpoint(
     """Load a training checkpoint. Returns metadata dict."""
     checkpoint = torch.load(path, map_location=device or "cpu", weights_only=False)
 
-    model.load_state_dict(checkpoint["model_state_dict"])
+    state_dict = (
+        checkpoint.get("model_state_dict")
+        or checkpoint.get("model_state")
+        or checkpoint.get("state_dict")
+        or checkpoint
+    )
+    model.load_state_dict(state_dict)
     logger.info(f"Model weights loaded from {path}")
 
-    if optimizer and "optimizer_state_dict" in checkpoint:
-        optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
+    opt_state = checkpoint.get("optimizer_state_dict") or checkpoint.get("optimizer_state")
+    if optimizer and opt_state is not None:
+        optimizer.load_state_dict(opt_state)
 
     if scaler and "scaler_state_dict" in checkpoint:
         scaler.load_state_dict(checkpoint["scaler_state_dict"])
@@ -60,5 +67,8 @@ def load_checkpoint(
 
     return {
         "epoch": checkpoint.get("epoch", 0),
-        "metrics": checkpoint.get("metrics", {}),
+        "metrics": checkpoint.get("metrics", {
+            "val_auc": checkpoint.get("val_auc"),
+            "val_acc": checkpoint.get("val_acc"),
+        }),
     }

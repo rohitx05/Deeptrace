@@ -1,0 +1,189 @@
+project:
+  name: DeepTrace
+  root: c:/Users/Udit/Desktop/deepfake1
+  last_updated: 2026-08-18
+  status: leakage_audited_heldout_verified
+  obsidian_vault: root  # vault = project root, HOME.md = MOC. All governance graphs connected.
+
+# ─── ACTIVE CHECKPOINTS ────────────────────────────────────────────
+checkpoint:
+  active_v7: checkpoints/v7_sota_spectral/best_model.pth
+  residual_stream: checkpoints/v5_srm_residual/best_model.pth
+  macro_stream: checkpoints/v3_e2e_multisource/best_model.pth
+  in_domain_anchor: checkpoints/v2_clip_finetune/best_model.pth
+  size_mb: 592
+  sha256_verified: true
+
+# --- COMPUTE ACCELERATOR & PYTHON ENVIRONMENT ---
+python_env:
+  windows_cuda:
+    path: .venv\Scripts\python.exe
+    spec: "PyTorch 2.6.0+cu124, NVIDIA RTX 4050 Laptop GPU (6.4 GB VRAM)"
+    amp_mode: "FP16 + torch.amp.GradScaler('cuda')"
+  macos_apple_silicon:
+    spec: "PyTorch 2.4-2.6, Apple Silicon M4 / MPS (16GB-36GB UMA)"
+    amp_mode: "Native BFloat16 / FP16 via torch.amp.autocast('mps')"
+    auto_detect: utils/device.py
+
+# ─── RIGOROUS AUDITED BENCHMARKS (STRICT VIDEO-DISJOINT 50/50 SPLITS) ─
+metrics:
+  video_disjoint_faceforensics_n12k:
+    v7_macro_auc_5_genuine_cohorts: 0.6334 # Deepfakes, FaceShifter, FaceSwap, Face2Face, NeuralTextures
+    v7_macro_auc_all_6_cohorts: 0.6969
+    v7_calibrated_macro_accuracy_youden: 0.6067 # Calibrated at optimal threshold t* in [0.66, 0.68]
+    v7_uncalibrated_accuracy_thresh05: 0.5005 # Raw 0.5 threshold fails due to real logit positive offset (+0.66)
+    v2_true_zeroshot_macro_auc: 0.5095 # Genuine Zero-Shot baseline (Kaggle-only trained)
+  cohort_breakdown_video_disjoint_n2k_each:
+    deepfakes: {auc: 0.7249, cal_acc: 0.6870, opt_thresh: 0.6826, real_mean: 0.66, fake_mean: 0.99}
+    faceshifter: {auc: 0.6720, cal_acc: 0.6310, opt_thresh: 0.6694, real_mean: 0.66, fake_mean: 0.71}
+    faceswap: {auc: 0.6340, cal_acc: 0.5985, opt_thresh: 0.6714, real_mean: 0.66, fake_mean: 0.71}
+    face2face: {auc: 0.5793, cal_acc: 0.5620, opt_thresh: 0.6646, real_mean: 0.66, fake_mean: 0.69}
+    neuraltextures: {auc: 0.5711, cal_acc: 0.5550, opt_thresh: 0.6631, real_mean: 0.66, fake_mean: 0.68}
+    deepfake_detection: {auc: 1.0000, cal_acc: 1.0000, opt_thresh: 0.9707, real_mean: 0.66, fake_mean: 7.29, status: "Studio actor/lighting distribution shortcut"}
+  in_domain_kaggle_n20k:
+    v2_anchor_accuracy: 0.9980
+    v2_anchor_auc: 0.99995
+    v7_multisource_accuracy: 0.9672
+    v7_multisource_auc: 0.99955
+  parameter_count_reconciliation:
+    full_multimodal_container_with_videoswin: 139749023 # 139.7M params (includes 28.2M VideoSwin)
+    v7_active_2d_spectral_detector: 119684803 # 119.7M params (VideoSwin replaced with 8.01M Spectral Combiner)
+    base_2d_detector: 114397743 # ~114M params (Spatial + Frequency + OpenCLIP + Fusion)
+
+# ─── ACTIVE ARCHITECTURE ──────────────────────────────────────────
+architecture:
+  active_variant: V6_Dual_Stream_Ensemble  # DeepTrace Macro + Microscopic Residual
+  config: configs/model_config.yaml
+  trained_modules:
+    spatial_encoder:    {backbone: efficientnet_b0, output_dim: 128, unfrozen_stages: [5, 6, 7], lr: 3e-5}
+    frequency_encoder:  {backbone: efficientnet_b0_dct, output_dim: 128, unfrozen_stages: [5, 6, 7], lr: 3e-5}
+    srm_residual_stream:{backbone: 3ch_srm_laplacian_filters, output_dim: 128, lr: 3e-5}
+    clip_projection:    {backbone: openclip_vit_b32, output_dim: 512, lr: 5e-6}
+    multimodal_fusion:  {type: cross_attention_2L_8H, hidden_dim: 512, lr: 1e-4}
+    detection_head:     {branches: [binary_logit, manipulation_5class], lr: 1e-4}
+  total_params_m: 139.7
+  trainable_params_m: 51.9
+
+# ─── DATA ─────────────────────────────────────────────────────────
+datasets:
+  available:
+    kaggle_realfake:
+      root: data/kaggle_realfake
+      mode: image
+      stylegan_images: 10000_READY  # test split fakes, never seen by model
+      stylegan_dir: 'D:\deepfake_data\kaggle_realfake\real_vs_fake\real-vs-fake\train\fake'
+      stylegan_source: kaggle_realfake/test/fake (held-out, zero overlap with train)
+      naming: stylegan_NNNNN.jpg
+  needed_for_v2: [FaceForensics++, CelebDF, DFDC]
+
+# ─── ROADMAP & EXPERIMENTAL PHASES ────────────────────────────────
+roadmap:
+  phase1_gan_finetune:
+    status: COMPLETE
+    data: "Kaggle Real vs Fake (100k + 10k StyleGAN)"
+    val_acc: 0.9968
+    val_auc: 0.9999
+    checkpoint: checkpoints/v1_gan_finetune/best_model.pth
+
+  phase2_clip_unfreeze:
+    status: COMPLETE
+    epochs_done: 10
+    best_auc: 0.99995
+    val_acc: 0.9980
+    checkpoint: checkpoints/v2_clip_finetune/best_model.pth
+    desc: "CLIP ViT-B/32 top blocks unfreezing with differential LR"
+
+  phase3_e2e_multisource:
+    status: COMPLETE
+    checkpoint: checkpoints/v3_e2e_multisource/best_model.pth
+    epochs_done: 12
+    val_auc: 0.8511
+    ffpp_macro_acc: 0.8572
+    ffpp_macro_f1: 0.9231
+    kaggle_retention_acc: 0.9967
+    desc: "Unfrozen EfficientNet spatial/frequency stages + Focal Loss on FF++ c23"
+
+  phase4_seam_hardmining:
+    status: COMPLETE
+    checkpoint: checkpoints/v4_seam_hardmining/best_model.pth
+    epochs_done: 8
+    val_auc: 0.9258
+    dfd_cohort_auc: 0.9995
+    ffpp_overall_auc: 0.5919
+    desc: "Seam-aware boundary augmentation + hard-sample loss weighting"
+
+  phase5_srm_residual_forensics:
+    status: COMPLETE
+    checkpoint: checkpoints/v5_srm_residual/best_model.pth
+    epochs_done: 8
+    train_auc: 0.9703
+    val_auc: 0.8498
+    dfd_cohort_auc: 0.9999
+    deepfakes_cohort_auc: 0.6254
+    faceswap_p_fake_gradcam: 0.8239
+    brier_score_calibrated: 0.004000
+    temperature_optimal: 0.873507
+    desc: "3-channel fixed SRM high-pass residual decomposition on frequency stream"
+
+  phase6_dual_stream_master_ensemble:
+    status: COMPLETE
+    components:
+      macro_stream: checkpoints/v3_e2e_multisource/best_model.pth
+      residual_stream: checkpoints/v5_srm_residual/best_model.pth
+    in_domain_kaggle_acc: 0.9969
+    in_domain_kaggle_auc: 0.99991
+    ffpp_dfd_auc: 0.9999
+    ffpp_overall_auc: 0.6321
+    json_report: results/benchmark_eval_v6/v6_ensemble_evaluation.json
+    desc: "Convex logit combination of macro synthesis cues and microscopic boundary residuals"
+
+  phase7_sota_multispectral_sbi:
+    status: PLANNED
+    plan_ref: sota_multi_spectral_v7_plan.md
+    features: [continuous_phase_fft, 2_level_wavelet_packet, 9ch_srm_gabor, dynamic_sbi_synthesis]
+    checkpoint_target: checkpoints/v7_sota_spectral/best_model.pth
+    test_unseen: celeb_df_v2  # Never used for training decisions
+    checkpoint_dir: checkpoints/v3_multisource_finetune/
+
+  phase3_v2_training:
+    status: DEFERRED  # Do NOT use until v3 baseline is working
+    entry_point: scripts/train_v2.py
+
+  phase4_calibration:
+    status: BLOCKED_BY_PHASE0
+    steps: [refit_v2_temperature, refit_v3_temperature_after_training]
+
+# ─── OPEN ISSUES ──────────────────────────────────────────────────
+open_issues:
+  - id: I1
+    desc: "train_v2.py only supports FF++/CelebDF/DFDC — needs kaggle_realfake support"
+  - id: I2
+    desc: "V2 stage 3 (temporal/video) blocked until video dataset available"
+  - id: I3
+    desc: "RESOLVED 2026-08-05: Phase 1 best_model.pth (534MB) and last.pth (663MB) both confirmed on disk, Epoch 15 complete."
+  - id: I4
+    desc: "pretrain_mae.py created but MAE pretraining never run"
+
+# ─── KEY FILES ────────────────────────────────────────────────────
+key_files:
+  inference:    inference/pipeline.py
+  ui:           ui/app.py
+  calibration:  calibration.py
+  v1_model:     models/detector.py
+  v2_model:     models/detector_v2.py
+  v2_train:     scripts/train_v2.py
+  v2_losses:    training/losses_v2.py
+  memory:       PROJECT_MEMORY.yaml
+  decisions:    PROJECT_DECISIONS.md
+  changes:      PROJECT_CHANGES.md
+  mistakes:     PROJECT_MISTAKES.md  # every bug + fix logged here
+
+# --- AGENT RULES ---
+agent_rules:
+  session_start: read PROJECT_MEMORY.yaml + AGENT_HANDOVER.md only
+  on_mistake:    append to AGENT_HANDOVER.md section "Mistakes & Fixes"
+  on_arch_change: append to AGENT_HANDOVER.md section "Architecture Changes"
+  on_freeze:     append to AGENT_HANDOVER.md section "Freeze/Unfreeze Log"
+  on_method:     append to AGENT_HANDOVER.md section "Method Changes"
+  on_session_end: update PROJECT_MEMORY.yaml status + PROJECT_CHANGES.md
+  handover_doc:  AGENT_HANDOVER.md  # primary doc for new agents/IDEs

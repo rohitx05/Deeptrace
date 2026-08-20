@@ -59,12 +59,13 @@ class GradCAM:
     def _backward_hook(self, module, grad_input, grad_output):
         self.gradients = grad_output[0].detach()
 
-    def generate(self, input_tensor: torch.Tensor, class_idx: int = None) -> np.ndarray:
+    def generate(self, input_tensor: torch.Tensor, dct_tensor: torch.Tensor = None, class_idx: int = None) -> np.ndarray:
         """
         Generate GradCAM heatmap.
 
         Args:
             input_tensor: (1, 3, H, W) preprocessed image tensor
+            dct_tensor: optional DCT frequency tensor
             class_idx: target class (None = predicted class)
 
         Returns:
@@ -77,7 +78,7 @@ class GradCAM:
         input_tensor.requires_grad_(True)
 
         # Forward pass
-        output = self.model(images=input_tensor, mode="image")
+        output = self.model(images=input_tensor, dct=dct_tensor, mode="image")
         logit = output["binary_logit"]
 
         if class_idx is None:
@@ -105,6 +106,69 @@ class GradCAM:
             cam = (cam - cam.min()) / (cam.max() - cam.min() + 1e-8)
 
         return cam
+
+    def generate_with_metadata(self, input_tensor, dct_tensor=None, class_idx=None, temperature=1.0):
+        """Generate GradCAM heatmap with prediction provenance.
+        
+        Returns dict with:
+        - heatmap: (H,W) numpy array
+        - raw_logit: float
+        - raw_probability: float  
+        - calibrated_probability: float (if temperature != 1.0)
+        - predicted_class: int (0=real, 1=fake)
+        - target_class_for_cam: int
+        - tta_used: False (explicit no-TTA policy)
+        - dct_provided: bool
+        """
+        # Start with empty heatmap
+        heatmap = np.zeros((input_tensor.shape[2], input_tensor.shape[3]))
+        
+        self.model.eval()
+        input_tensor.requires_grad_(True)
+        
+        # Simple protocol: one no-TTA forward pass
+        output = self.model(images=input_tensor, dct=dct_tensor, mode="image")
+        logit = output["binary_logit"]
+        
+        raw_logit = logit.item()
+        raw_probability = torch.sigmoid(logit).item()
+        calibrated_probability = torch.sigmoid(logit / temperature).item()
+        predicted_class = 1 if raw_probability > 0.5 else 0
+        
+        target_class_for_cam = predicted_class if class_idx is None else class_idx
+        
+        if self.target_layer is not None:
+            # Backward pass
+            self.model.zero_grad()
+            target = logit if target_class_for_cam == 1 else -logit
+            target.backward(retain_graph=True)
+            
+            if self.gradients is not None and self.activations is not None:
+                # GradCAM computation
+                weights = self.gradients.mean(dim=(2, 3), keepdim=True)
+                cam = (weights * self.activations).sum(dim=1, keepdim=True)
+                cam = F.relu(cam)
+                
+                # Resize to input size
+                cam = F.interpolate(cam, size=input_tensor.shape[2:], mode="bilinear", align_corners=False)
+                cam = cam.squeeze().cpu().numpy()
+                
+                # Normalize
+                if cam.max() > 0:
+                    cam = (cam - cam.min()) / (cam.max() - cam.min() + 1e-8)
+                heatmap = cam
+                
+        return {
+            "heatmap": heatmap,
+            "raw_logit": raw_logit,
+            "raw_probability": raw_probability,
+            "calibrated_probability": calibrated_probability,
+            "predicted_class": predicted_class,
+            "target_class_for_cam": target_class_for_cam,
+            "tta_used": False,
+            "dct_provided": dct_tensor is not None
+        }
+
 
     def overlay_heatmap(
         self, heatmap: np.ndarray, original_image: np.ndarray, alpha: float = 0.5

@@ -1,0 +1,464 @@
+{
+  "model": "DeepTrace (v2_clip_finetune)",
+  "checkpoint": "checkpoints/v2_clip_finetune/best_model.pth",
+  "item1_gradcam": [
+    {
+      "image": "data/kaggle_realfake/real_vs_fake/real-vs-fake/test/real/00001.jpg",
+      "desc": "authentic",
+      "true_label": 0,
+      "pred_prob": 1.1824029115814483e-06,
+      "output_overlay": "results\\gradcam_v2\\audit_gradcam_authentic.png"
+    },
+    {
+      "image": "data/kaggle_realfake/real_vs_fake/real-vs-fake/test/fake/00276TOPP4.jpg",
+      "desc": "manipulated_stylegan",
+      "true_label": 1,
+      "pred_prob": 0.9999988079071045,
+      "output_overlay": "results\\gradcam_v2\\audit_gradcam_manipulated_stylegan.png"
+    }
+  ],
+  "item2_and_3_evaluation": {
+    "temperature": 1.703706,
+    "validation_metrics": {
+      "brier_raw": 0.002792188141677091,
+      "brier_calibrated": 0.002637148437779037
+    },
+    "test_metrics_raw_0_50": {
+      "accuracy": 0.9978,
+      "roc_auc": 0.9999520449999999,
+      "f1_score": 0.9978046103183315,
+      "brier_score": 0.0019795014696719943,
+      "confusion_matrix": [
+        [
+          9957,
+          43
+        ],
+        [
+          1,
+          9999
+        ]
+      ]
+    },
+    "test_metrics_calibrated_0_63": {
+      "accuracy": 0.998,
+      "roc_auc": 0.9999520449999999,
+      "f1_score": 0.998003593531643,
+      "brier_score": 0.0019343768982249302,
+      "confusion_matrix": [
+        [
+          9962,
+          38
+        ],
+        [
+          2,
+          9998
+        ]
+      ]
+    }
+  },
+  "item4_baselines": {
+    "mesonet": {
+      "model": "MesoNet-4 (Afchar et al., 2018)",
+      "seed": 42,
+      "epochs": 15,
+      "optimizer": "Adam(lr=0.001, no weight_decay)",
+      "scheduler": "CosineAnnealingLR(T_max=15)",
+      "params": 17945,
+      "val_metrics": {
+        "accuracy": 0.83955,
+        "roc_auc": 0.9183955350000002,
+        "precision": 0.8438481012658228,
+        "recall": 0.8333,
+        "f1_score": 0.8385408805031447,
+        "brier_score": 0.11578110605478287,
+        "confusion_matrix": [
+          [
+            8458,
+            1542
+          ],
+          [
+            1667,
+            8333
+          ]
+        ],
+        "classification_report": {
+          "Real": {
+            "precision": 0.835358024691358,
+            "recall": 0.8458,
+            "f1-score": 0.8405465838509317,
+            "support": 10000.0
+          },
+          "Fake": {
+            "precision": 0.8438481012658228,
+            "recall": 0.8333,
+            "f1-score": 0.8385408805031447,
+            "support": 10000.0
+          },
+          "accuracy": 0.83955,
+          "macro avg": {
+            "precision": 0.8396030629785904,
+            "recall": 0.83955,
+            "f1-score": 0.8395437321770383,
+            "support": 20000.0
+          },
+          "weighted avg": {
+            "precision": 0.8396030629785902,
+            "recall": 0.83955,
+            "f1-score": 0.8395437321770384,
+            "support": 20000.0
+          }
+        }
+      },
+      "test_metrics": {
+        "accuracy": 0.84155,
+        "roc_auc": 0.920400995,
+        "precision": 0.8457333738232614,
+        "recall": 0.8355,
+        "f1_score": 0.8405855425323205,
+        "brier_score": 0.1146838590502739,
+        "confusion_matrix": [
+          [
+            8476,
+            1524
+          ],
+          [
+            1645,
+            8355
+          ]
+        ],
+        "classification_report": {
+          "Real": {
+            "precision": 0.8374666534927379,
+            "recall": 0.8476,
+            "f1-score": 0.8425028577108493,
+            "support": 10000.0
+          },
+          "Fake": {
+            "precision": 0.8457333738232614,
+            "recall": 0.8355,
+            "f1-score": 0.8405855425323205,
+            "support": 10000.0
+          },
+          "accuracy": 0.84155,
+          "macro avg": {
+            "precision": 0.8416000136579996,
+            "recall": 0.84155,
+            "f1-score": 0.8415442001215849,
+            "support": 20000.0
+          },
+          "weighted avg": {
+            "precision": 0.8416000136579996,
+            "recall": 0.84155,
+            "f1-score": 0.8415442001215848,
+            "support": 20000.0
+          }
+        }
+      }
+    },
+    "xception": {
+      "model": "Xception (R\u00f6ssler et al., 2019)",
+      "seed": 42,
+      "epochs_trained": 2,
+      "val_accuracy": 0.9838,
+      "val_auc": 0.9999,
+      "test_metrics": {
+        "accuracy": 0.9834,
+        "roc_auc": 0.99978371,
+        "precision": 0.9685924777045366,
+        "recall": 0.9992,
+        "f1_score": 0.9836582004331561,
+        "brier_score": 0.01226258483988537,
+        "confusion_matrix": [
+          [
+            9676,
+            324
+          ],
+          [
+            8,
+            9992
+          ]
+        ],
+        "classification_report": {
+          "Real": {
+            "precision": 0.9991738950846758,
+            "recall": 0.9676,
+            "f1-score": 0.9831335094492989,
+            "support": 10000.0
+          },
+          "Fake": {
+            "precision": 0.9685924777045366,
+            "recall": 0.9992,
+            "f1-score": 0.9836582004331561,
+            "support": 10000.0
+          },
+          "accuracy": 0.9834,
+          "macro avg": {
+            "precision": 0.9838831863946063,
+            "recall": 0.9834,
+            "f1-score": 0.9833958549412275,
+            "support": 20000.0
+          },
+          "weighted avg": {
+            "precision": 0.9838831863946063,
+            "recall": 0.9834,
+            "f1-score": 0.9833958549412276,
+            "support": 20000.0
+          }
+        }
+      }
+    }
+  },
+  "item5_cross_dataset": {
+    "ffpp_zeroshot": {
+      "model": "DeepTrace (v2_clip_finetune) Zero-Shot",
+      "checkpoint": "checkpoints/v2_clip_finetune/best_model.pth",
+      "overall": {
+        "accuracy": 0.14285714285714285,
+        "roc_auc": 0.527503375,
+        "f1_score": 0.0,
+        "brier_score": 0.8570555804214369,
+        "confusion_matrix": [
+          [
+            2000,
+            0
+          ],
+          [
+            12000,
+            0
+          ]
+        ],
+        "n_samples": 14000
+      },
+      "per_manipulation": {
+        "FaceSwap": {
+          "accuracy": 0.5,
+          "roc_auc": 0.5060746250000001,
+          "f1_score": 0.0,
+          "brier_score": 0.4999858162345942,
+          "confusion_matrix": [
+            [
+              2000,
+              0
+            ],
+            [
+              2000,
+              0
+            ]
+          ],
+          "n_samples": 4000
+        },
+        "Deepfakes": {
+          "accuracy": 0.5,
+          "roc_auc": 0.516269625,
+          "f1_score": 0.0,
+          "brier_score": 0.499895614132131,
+          "confusion_matrix": [
+            [
+              2000,
+              0
+            ],
+            [
+              2000,
+              0
+            ]
+          ],
+          "n_samples": 4000
+        },
+        "Face2Face": {
+          "accuracy": 0.5,
+          "roc_auc": 0.4982058749999999,
+          "f1_score": 0.0,
+          "brier_score": 0.49997212886145875,
+          "confusion_matrix": [
+            [
+              2000,
+              0
+            ],
+            [
+              2000,
+              0
+            ]
+          ],
+          "n_samples": 4000
+        },
+        "NeuralTextures": {
+          "accuracy": 0.5,
+          "roc_auc": 0.501815,
+          "f1_score": 0.0,
+          "brier_score": 0.49997673527295566,
+          "confusion_matrix": [
+            [
+              2000,
+              0
+            ],
+            [
+              2000,
+              0
+            ]
+          ],
+          "n_samples": 4000
+        },
+        "FaceShifter": {
+          "accuracy": 0.5,
+          "roc_auc": 0.50761025,
+          "f1_score": 0.0,
+          "brier_score": 0.4999687030209499,
+          "confusion_matrix": [
+            [
+              2000,
+              0
+            ],
+            [
+              2000,
+              0
+            ]
+          ],
+          "n_samples": 4000
+        },
+        "DeepFakeDetection": {
+          "accuracy": 0.5,
+          "roc_auc": 0.63504025,
+          "f1_score": 0.0,
+          "brier_score": 0.4998961417207492,
+          "confusion_matrix": [
+            [
+              2000,
+              0
+            ],
+            [
+              2000,
+              0
+            ]
+          ],
+          "n_samples": 4000
+        }
+      }
+    },
+    "ffpp_v3_postft": {
+      "model": "DeepTrace (v3_multisource_finetune)",
+      "checkpoint": "checkpoints/v3_multisource_finetune/best_model.pth",
+      "overall": {
+        "accuracy": 0.8296428571428571,
+        "roc_auc": 0.5231337083333333,
+        "f1_score": 0.9062389432716123,
+        "brier_score": 0.20883227092017373,
+        "confusion_matrix": [
+          [
+            89,
+            1911
+          ],
+          [
+            474,
+            11526
+          ]
+        ],
+        "n_samples": 14000
+      },
+      "per_manipulation": {
+        "FaceSwap": {
+          "accuracy": 0.50075,
+          "roc_auc": 0.48378462499999997,
+          "f1_score": 0.657167381974249,
+          "brier_score": 0.25921987924592393,
+          "confusion_matrix": [
+            [
+              89,
+              1911
+            ],
+            [
+              86,
+              1914
+            ]
+          ],
+          "n_samples": 4000
+        },
+        "Deepfakes": {
+          "accuracy": 0.49725,
+          "roc_auc": 0.49720774999999995,
+          "f1_score": 0.6539321975563587,
+          "brier_score": 0.26095855583904265,
+          "confusion_matrix": [
+            [
+              89,
+              1911
+            ],
+            [
+              100,
+              1900
+            ]
+          ],
+          "n_samples": 4000
+        },
+        "Face2Face": {
+          "accuracy": 0.501,
+          "roc_auc": 0.48643725,
+          "f1_score": 0.657397871610024,
+          "brier_score": 0.2590095218306815,
+          "confusion_matrix": [
+            [
+              89,
+              1911
+            ],
+            [
+              85,
+              1915
+            ]
+          ],
+          "n_samples": 4000
+        },
+        "NeuralTextures": {
+          "accuracy": 0.50025,
+          "roc_auc": 0.49459512499999997,
+          "f1_score": 0.656706165206938,
+          "brier_score": 0.25936962252974627,
+          "confusion_matrix": [
+            [
+              89,
+              1911
+            ],
+            [
+              88,
+              1912
+            ]
+          ],
+          "n_samples": 4000
+        },
+        "FaceShifter": {
+          "accuracy": 0.49675,
+          "roc_auc": 0.485769875,
+          "f1_score": 0.6534687553795834,
+          "brier_score": 0.26100775603544024,
+          "confusion_matrix": [
+            [
+              89,
+              1911
+            ],
+            [
+              102,
+              1898
+            ]
+          ],
+          "n_samples": 4000
+        },
+        "DeepFakeDetection": {
+          "accuracy": 0.519,
+          "roc_auc": 0.6910120000000001,
+          "f1_score": 0.6737877246524245,
+          "brier_score": 0.2452327698589652,
+          "confusion_matrix": [
+            [
+              89,
+              1911
+            ],
+            [
+              13,
+              1987
+            ]
+          ],
+          "n_samples": 4000
+        }
+      }
+    }
+  },
+  "item6_documentation_status": "Verified in submission_report.md"
+}

@@ -1,0 +1,293 @@
+{
+  "audit_timestamp": "2026-08-18",
+  "confound_analysis": {
+    "dfd_1_0000_explanation": "In evaluate_v7_sota_spectral.py, cohort samples were sliced with [:2000], which matched the training slice [:2000] in train_v7_sota_spectral.py. The 1.0000 DFD AUC was an evaluation on training slice data, NOT a true held-out test.",
+    "zero_shot_clarification": "V7 is a Multi-Source Fine-Tuned Model (trained on Kaggle + FF++ c23 slices). V2 (trained on Kaggle only) is the genuine Zero-Shot baseline."
+  },
+  "strictly_held_out_unseen_benchmarks": {
+    "v7_multi_source_finetuned": {
+      "DeepFakeDetection": {
+        "accuracy": 0.643,
+        "roc_auc": 0.998963,
+        "f1_score": 0.7369196757553427,
+        "raw_brier": 0.164794921875,
+        "calibrated_brier": 0.170654296875,
+        "raw_ece": 0.29261999511718745,
+        "calibrated_ece": 0.29727014160156245,
+        "confusion_matrix": [
+          [
+            572,
+            1428
+          ],
+          [
+            0,
+            2000
+          ]
+        ],
+        "n_samples": 4000
+      },
+      "Deepfakes": {
+        "accuracy": 0.55975,
+        "roc_auc": 0.59990125,
+        "f1_score": 0.6543670264965653,
+        "raw_brier": 0.249267578125,
+        "calibrated_brier": 0.251220703125,
+        "raw_ece": 0.09400250244140627,
+        "calibrated_ece": 0.10746337890625002,
+        "confusion_matrix": [
+          [
+            572,
+            1428
+          ],
+          [
+            333,
+            1667
+          ]
+        ],
+        "n_samples": 4000
+      },
+      "FaceSwap": {
+        "accuracy": 0.51875,
+        "roc_auc": 0.52097825,
+        "f1_score": 0.6096126546339485,
+        "raw_brier": 0.2578125,
+        "calibrated_brier": 0.260498046875,
+        "raw_ece": 0.08602374267578125,
+        "calibrated_ece": 0.09746496582031249,
+        "confusion_matrix": [
+          [
+            572,
+            1428
+          ],
+          [
+            497,
+            1503
+          ]
+        ],
+        "n_samples": 4000
+      },
+      "FaceShifter": {
+        "accuracy": 0.53975,
+        "roc_auc": 0.555752375,
+        "f1_score": 0.632901296111665,
+        "raw_brier": 0.25439453125,
+        "calibrated_brier": 0.256591796875,
+        "raw_ece": 0.08913775634765626,
+        "calibrated_ece": 0.10112652587890626,
+        "confusion_matrix": [
+          [
+            572,
+            1428
+          ],
+          [
+            413,
+            1587
+          ]
+        ],
+        "n_samples": 4000
+      },
+      "Face2Face": {
+        "accuracy": 0.51475,
+        "roc_auc": 0.5193004999999999,
+        "f1_score": 0.6050864699898271,
+        "raw_brier": 0.258544921875,
+        "calibrated_brier": 0.26123046875,
+        "raw_ece": 0.08571636962890625,
+        "calibrated_ece": 0.09733709716796878,
+        "confusion_matrix": [
+          [
+            572,
+            1428
+          ],
+          [
+            513,
+            1487
+          ]
+        ],
+        "n_samples": 4000
+      },
+      "NeuralTextures": {
+        "accuracy": 0.501,
+        "roc_auc": 0.516588625,
+        "f1_score": 0.5893004115226338,
+        "raw_brier": 0.259033203125,
+        "calibrated_brier": 0.261962890625,
+        "raw_ece": 0.08611065673828125,
+        "calibrated_ece": 0.09784326171874999,
+        "confusion_matrix": [
+          [
+            572,
+            1428
+          ],
+          [
+            568,
+            1432
+          ]
+        ],
+        "n_samples": 4000
+      },
+      "overall_ffpp": {
+        "accuracy": 0.7319285714285715,
+        "roc_auc": 0.6185828958333334,
+        "f1_score": 0.8375535644721465,
+        "raw_brier": 0.1783447265625,
+        "calibrated_brier": 0.175048828125,
+        "raw_ece": 0.20989474051339288,
+        "calibrated_ece": 0.19885989815848215,
+        "confusion_matrix": [
+          [
+            572,
+            1428
+          ],
+          [
+            2325,
+            9675
+          ]
+        ],
+        "n_samples": 14000
+      }
+    },
+    "v2_true_zero_shot": {
+      "DeepFakeDetection": {
+        "accuracy": 0.5,
+        "roc_auc": 0.508373375,
+        "f1_score": 0.0,
+        "raw_brier": 0.5,
+        "calibrated_brier": 0.5,
+        "raw_ece": 0.4999935030937195,
+        "calibrated_ece": 0.49999815225601196,
+        "confusion_matrix": [
+          [
+            2000,
+            0
+          ],
+          [
+            2000,
+            0
+          ]
+        ],
+        "n_samples": 4000
+      },
+      "Deepfakes": {
+        "accuracy": 0.5,
+        "roc_auc": 0.5059025,
+        "f1_score": 0.0,
+        "raw_brier": 0.5,
+        "calibrated_brier": 0.5,
+        "raw_ece": 0.4999939203262329,
+        "calibrated_ece": 0.4999982714653015,
+        "confusion_matrix": [
+          [
+            2000,
+            0
+          ],
+          [
+            2000,
+            0
+          ]
+        ],
+        "n_samples": 4000
+      },
+      "FaceSwap": {
+        "accuracy": 0.5,
+        "roc_auc": 0.501234125,
+        "f1_score": 0.0,
+        "raw_brier": 0.5,
+        "calibrated_brier": 0.5,
+        "raw_ece": 0.49999499320983887,
+        "calibrated_ece": 0.4999985694885254,
+        "confusion_matrix": [
+          [
+            2000,
+            0
+          ],
+          [
+            2000,
+            0
+          ]
+        ],
+        "n_samples": 4000
+      },
+      "FaceShifter": {
+        "accuracy": 0.5,
+        "roc_auc": 0.502447125,
+        "f1_score": 0.0,
+        "raw_brier": 0.5,
+        "calibrated_brier": 0.5,
+        "raw_ece": 0.49999260902404785,
+        "calibrated_ece": 0.4999975562095642,
+        "confusion_matrix": [
+          [
+            2000,
+            0
+          ],
+          [
+            2000,
+            0
+          ]
+        ],
+        "n_samples": 4000
+      },
+      "Face2Face": {
+        "accuracy": 0.5,
+        "roc_auc": 0.50153225,
+        "f1_score": 0.0,
+        "raw_brier": 0.5,
+        "calibrated_brier": 0.5,
+        "raw_ece": 0.4999919533729553,
+        "calibrated_ece": 0.4999973177909851,
+        "confusion_matrix": [
+          [
+            2000,
+            0
+          ],
+          [
+            2000,
+            0
+          ]
+        ],
+        "n_samples": 4000
+      },
+      "NeuralTextures": {
+        "accuracy": 0.5,
+        "roc_auc": 0.5022292500000001,
+        "f1_score": 0.0,
+        "raw_brier": 0.5,
+        "calibrated_brier": 0.5,
+        "raw_ece": 0.49999409914016724,
+        "calibrated_ece": 0.4999982714653015,
+        "confusion_matrix": [
+          [
+            2000,
+            0
+          ],
+          [
+            2000,
+            0
+          ]
+        ],
+        "n_samples": 4000
+      },
+      "overall_ffpp": {
+        "accuracy": 0.14285714285714285,
+        "roc_auc": 0.5036197708333334,
+        "f1_score": 0.0,
+        "raw_brier": 0.85693359375,
+        "calibrated_brier": 0.85693359375,
+        "raw_ece": 0.14285034792763845,
+        "calibrated_ece": 0.1428550566945757,
+        "confusion_matrix": [
+          [
+            2000,
+            0
+          ],
+          [
+            12000,
+            0
+          ]
+        ],
+        "n_samples": 14000
+      }
+    }
+  }
+}

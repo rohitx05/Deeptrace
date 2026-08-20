@@ -1,0 +1,52 @@
+{
+  "model": "Xception (R\u00f6ssler et al., 2019)",
+  "seed": 42,
+  "epochs_trained": 2,
+  "val_accuracy": 0.9838,
+  "val_auc": 0.9999,
+  "test_metrics": {
+    "accuracy": 0.9834,
+    "roc_auc": 0.99978371,
+    "precision": 0.9685924777045366,
+    "recall": 0.9992,
+    "f1_score": 0.9836582004331561,
+    "brier_score": 0.01226258483988537,
+    "confusion_matrix": [
+      [
+        9676,
+        324
+      ],
+      [
+        8,
+        9992
+      ]
+    ],
+    "classification_report": {
+      "Real": {
+        "precision": 0.9991738950846758,
+        "recall": 0.9676,
+        "f1-score": 0.9831335094492989,
+        "support": 10000.0
+      },
+      "Fake": {
+        "precision": 0.9685924777045366,
+        "recall": 0.9992,
+        "f1-score": 0.9836582004331561,
+        "support": 10000.0
+      },
+      "accuracy": 0.9834,
+      "macro avg": {
+        "precision": 0.9838831863946063,
+        "recall": 0.9834,
+        "f1-score": 0.9833958549412275,
+        "support": 20000.0
+      },
+      "weighted avg": {
+        "precision": 0.9838831863946063,
+        "recall": 0.9834,
+        "f1-score": 0.9833958549412276,
+        "support": 20000.0
+      }
+    }
+  }
+}

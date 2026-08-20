@@ -1,0 +1,270 @@
+{
+  "audit_description": "Strict Video/Subject-Disjoint Cross-Dataset Evaluation on FaceForensics++ c23",
+  "split_methodology": "Disjoint Video Sequence IDs (0% video or actor overlap between train/val and test)",
+  "cohorts": {
+    "DeepFakeDetection": {
+      "v7_multisource_ft": {
+        "accuracy": 0.5005,
+        "roc_auc": 1.0,
+        "f1_score": 0.6668889629876625,
+        "brier_score": 0.2176513671875,
+        "confusion_matrix": [
+          [
+            1,
+            999
+          ],
+          [
+            0,
+            1000
+          ]
+        ],
+        "n_samples": 2000,
+        "n_reals": 1000,
+        "n_fakes": 1000
+      },
+      "v2_true_zeroshot": {
+        "accuracy": 0.5,
+        "roc_auc": 0.560597,
+        "f1_score": 0.0,
+        "brier_score": 0.5,
+        "confusion_matrix": [
+          [
+            1000,
+            0
+          ],
+          [
+            1000,
+            0
+          ]
+        ],
+        "n_samples": 2000,
+        "n_reals": 1000,
+        "n_fakes": 1000
+      },
+      "test_video_count": 300,
+      "eval_samples_balanced": 2000
+    },
+    "Deepfakes": {
+      "v7_multisource_ft": {
+        "accuracy": 0.5005,
+        "roc_auc": 0.7250405,
+        "f1_score": 0.6668889629876625,
+        "brier_score": 0.263427734375,
+        "confusion_matrix": [
+          [
+            1,
+            999
+          ],
+          [
+            0,
+            1000
+          ]
+        ],
+        "n_samples": 2000,
+        "n_reals": 1000,
+        "n_fakes": 1000
+      },
+      "v2_true_zeroshot": {
+        "accuracy": 0.5,
+        "roc_auc": 0.5049509999999999,
+        "f1_score": 0.0,
+        "brier_score": 0.5,
+        "confusion_matrix": [
+          [
+            1000,
+            0
+          ],
+          [
+            1000,
+            0
+          ]
+        ],
+        "n_samples": 2000,
+        "n_reals": 1000,
+        "n_fakes": 1000
+      },
+      "test_video_count": 300,
+      "eval_samples_balanced": 2000
+    },
+    "FaceSwap": {
+      "v7_multisource_ft": {
+        "accuracy": 0.5005,
+        "roc_auc": 0.634043,
+        "f1_score": 0.6668889629876625,
+        "brier_score": 0.272216796875,
+        "confusion_matrix": [
+          [
+            1,
+            999
+          ],
+          [
+            0,
+            1000
+          ]
+        ],
+        "n_samples": 2000,
+        "n_reals": 1000,
+        "n_fakes": 1000
+      },
+      "v2_true_zeroshot": {
+        "accuracy": 0.5,
+        "roc_auc": 0.497488,
+        "f1_score": 0.0,
+        "brier_score": 0.5,
+        "confusion_matrix": [
+          [
+            1000,
+            0
+          ],
+          [
+            1000,
+            0
+          ]
+        ],
+        "n_samples": 2000,
+        "n_reals": 1000,
+        "n_fakes": 1000
+      },
+      "test_video_count": 300,
+      "eval_samples_balanced": 2000
+    },
+    "FaceShifter": {
+      "v7_multisource_ft": {
+        "accuracy": 0.5005,
+        "roc_auc": 0.6719645000000001,
+        "f1_score": 0.6668889629876625,
+        "brier_score": 0.272216796875,
+        "confusion_matrix": [
+          [
+            1,
+            999
+          ],
+          [
+            0,
+            1000
+          ]
+        ],
+        "n_samples": 2000,
+        "n_reals": 1000,
+        "n_fakes": 1000
+      },
+      "v2_true_zeroshot": {
+        "accuracy": 0.5,
+        "roc_auc": 0.49900949999999994,
+        "f1_score": 0.0,
+        "brier_score": 0.5,
+        "confusion_matrix": [
+          [
+            1000,
+            0
+          ],
+          [
+            1000,
+            0
+          ]
+        ],
+        "n_samples": 2000,
+        "n_reals": 1000,
+        "n_fakes": 1000
+      },
+      "test_video_count": 300,
+      "eval_samples_balanced": 2000
+    },
+    "Face2Face": {
+      "v7_multisource_ft": {
+        "accuracy": 0.5005,
+        "roc_auc": 0.5793065,
+        "f1_score": 0.6668889629876625,
+        "brier_score": 0.27392578125,
+        "confusion_matrix": [
+          [
+            1,
+            999
+          ],
+          [
+            0,
+            1000
+          ]
+        ],
+        "n_samples": 2000,
+        "n_reals": 1000,
+        "n_fakes": 1000
+      },
+      "v2_true_zeroshot": {
+        "accuracy": 0.5,
+        "roc_auc": 0.4974815,
+        "f1_score": 0.0,
+        "brier_score": 0.5,
+        "confusion_matrix": [
+          [
+            1000,
+            0
+          ],
+          [
+            1000,
+            0
+          ]
+        ],
+        "n_samples": 2000,
+        "n_reals": 1000,
+        "n_fakes": 1000
+      },
+      "test_video_count": 300,
+      "eval_samples_balanced": 2000
+    },
+    "NeuralTextures": {
+      "v7_multisource_ft": {
+        "accuracy": 0.5005,
+        "roc_auc": 0.570987,
+        "f1_score": 0.6668889629876625,
+        "brier_score": 0.274169921875,
+        "confusion_matrix": [
+          [
+            1,
+            999
+          ],
+          [
+            0,
+            1000
+          ]
+        ],
+        "n_samples": 2000,
+        "n_reals": 1000,
+        "n_fakes": 1000
+      },
+      "v2_true_zeroshot": {
+        "accuracy": 0.5,
+        "roc_auc": 0.49747600000000003,
+        "f1_score": 0.0,
+        "brier_score": 0.5,
+        "confusion_matrix": [
+          [
+            1000,
+            0
+          ],
+          [
+            1000,
+            0
+          ]
+        ],
+        "n_samples": 2000,
+        "n_reals": 1000,
+        "n_fakes": 1000
+      },
+      "test_video_count": 300,
+      "eval_samples_balanced": 2000
+    }
+  },
+  "macro_averages": {
+    "v7_multisource_ft": {
+      "balanced_macro_accuracy": 0.5004999999999998,
+      "macro_roc_auc": 0.69689025,
+      "macro_f1_score": 0.6668889629876625
+    },
+    "v2_true_zeroshot": {
+      "balanced_macro_accuracy": 0.5,
+      "macro_roc_auc": 0.5095005,
+      "macro_f1_score": 0.0
+    }
+  }
+}

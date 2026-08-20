@@ -1,0 +1,136 @@
+{
+  "audit_title": "DeepTrace Final Academic Progression & Benchmark Verification",
+  "tested_checkpoint": "checkpoints/v5_srm_residual/best_model.pth",
+  "item1_gradcam_v5": [
+    {
+      "title": "Authentic Face",
+      "true_label": 0,
+      "pred_prob": 0.0016635401407256722,
+      "overlay_path": "results\\gradcam_v5_srm\\audit_gradcam_v5_authentic_face.png"
+    },
+    {
+      "title": "StyleGAN Synthesis",
+      "true_label": 1,
+      "pred_prob": 0.9996687173843384,
+      "overlay_path": "results\\gradcam_v5_srm\\audit_gradcam_v5_stylegan_synthesis.png"
+    },
+    {
+      "title": "FF++ FaceSwap",
+      "true_label": 1,
+      "pred_prob": 0.8239247798919678,
+      "overlay_path": "results\\gradcam_v5_srm\\audit_gradcam_v5_ffpp_faceswap.png"
+    },
+    {
+      "title": "FF++ DeepFakeDetection",
+      "true_label": 1,
+      "pred_prob": 0.9999997615814209,
+      "overlay_path": "results\\gradcam_v5_srm\\audit_gradcam_v5_ffpp_deepfakedetection.png"
+    }
+  ],
+  "item2_calibration": {
+    "optimal_temperature_T": 0.8735073203485961,
+    "validation_brier_score": 0.004306794999710351,
+    "test_brier_score": 0.004000295628609664
+  },
+  "item3_confusion_matrix": {
+    "dataset": "Kaggle In-Domain Test Split (N=20,000)",
+    "accuracy": 0.99525,
+    "roc_auc": 0.999800405,
+    "f1_score": 0.9952592444732771,
+    "matrix": [
+      [
+        9933,
+        67
+      ],
+      [
+        28,
+        9972
+      ]
+    ],
+    "tn": 9933,
+    "fp": 67,
+    "fn": 28,
+    "tp": 9972
+  },
+  "item4_in_domain_progression": {
+    "MesoNet-4 Baseline": {
+      "accuracy": 0.8416,
+      "roc_auc": 0.9204,
+      "f1_score": 0.8406,
+      "brier_score": 0.1147
+    },
+    "XceptionNet Baseline": {
+      "accuracy": 0.9834,
+      "roc_auc": 0.9998,
+      "f1_score": 0.9837,
+      "brier_score": 0.0123
+    },
+    "DeepTrace V2 (CLIP-Tuned)": {
+      "accuracy": 0.998,
+      "roc_auc": 0.99995,
+      "f1_score": 0.998,
+      "brier_score": 0.00193
+    },
+    "DeepTrace V3-E2E (Unfrozen)": {
+      "accuracy": 0.9967,
+      "roc_auc": 0.9999,
+      "f1_score": 0.9967,
+      "brier_score": 0.00268
+    },
+    "DeepTrace V4-Seam (Hard-Mined)": {
+      "accuracy": 0.9947,
+      "roc_auc": 0.99978,
+      "f1_score": 0.9947,
+      "brier_score": 0.00312
+    },
+    "DeepTrace V5-SRM (Residual)": {
+      "accuracy": 0.99525,
+      "roc_auc": 0.999800405,
+      "f1_score": 0.9952592444732771,
+      "brier_score": 0.004000295628609664
+    },
+    "DeepTrace V6 Dual-Stream Ensemble": {
+      "accuracy": 0.9969,
+      "roc_auc": 0.99991,
+      "f1_score": 0.9969,
+      "brier_score": 0.00241
+    }
+  },
+  "item5_cross_dataset_ffpp_progression": {
+    "Pre-FT Zero-Shot (V2 on FF++)": {
+      "overall_accuracy": 0.1429,
+      "overall_auc": 0.5275,
+      "dfd_auc": 0.511,
+      "deepfakes_auc": 0.5163,
+      "faceswap_p_fake": 0.0
+    },
+    "DeepTrace V3-E2E (Unfrozen)": {
+      "overall_accuracy": 0.8572,
+      "overall_auc": 0.4759,
+      "dfd_auc": 0.4242,
+      "deepfakes_auc": 0.4686,
+      "faceswap_p_fake": 0.5276
+    },
+    "DeepTrace V4-Seam (Hard-Mined)": {
+      "overall_accuracy": 0.7357,
+      "overall_auc": 0.5919,
+      "dfd_auc": 0.9995,
+      "deepfakes_auc": 0.5302,
+      "faceswap_p_fake": 0.528
+    },
+    "DeepTrace V5-SRM (Residual)": {
+      "overall_accuracy": 0.5366,
+      "overall_auc": 0.6321,
+      "dfd_auc": 0.9999,
+      "deepfakes_auc": 0.6254,
+      "faceswap_p_fake": 0.8239
+    },
+    "DeepTrace V6 Dual-Stream Ensemble": {
+      "overall_accuracy": 0.5513,
+      "overall_auc": 0.6321,
+      "dfd_auc": 0.9999,
+      "deepfakes_auc": 0.6254,
+      "faceswap_p_fake": 0.8239
+    }
+  }
+}

@@ -1,0 +1,129 @@
+# Checkpoint Manifest — Frozen Baseline
+# Generated: 2026-08-16T03:35Z
+# Purpose: Immutable record of all checkpoint states before Phase 0 fixes begin
+
+baseline_freeze:
+  date: "2026-08-16"
+  reason: "Pre-test audit identified 7 P0 blockers. Freezing all checkpoints before fixes."
+  backup_location: "D:\\deepfake_checkpoints_backup\\"
+
+checkpoints:
+  v2_clip_finetune_best:
+    path: "checkpoints/v2_clip_finetune/best_model.pth"
+    sha256: "1FC7332BB832C2A7FF283EFE76619B5D1354D2E06336E27E7F191F04B16F3077"
+    size_bytes: 559794486
+    created: "2026-08-06"
+    architecture: "DeepfakeDetector (V1)"
+    training_chain: "V1 Kaggle → Phase 1 GAN finetune → Phase 2 CLIP unfreeze"
+    training_data: "Kaggle Real-vs-Fake (100k + 10k StyleGAN)"
+    best_epoch: 3
+    status: FROZEN_IMMUTABLE
+    label: "Kaggle-only StyleGAN-vs-FFHQ model"
+    backup: "D:\\deepfake_checkpoints_backup\\v2_clip_finetune_best_model.pth"
+
+  v2_clip_finetune_last:
+    path: "checkpoints/v2_clip_finetune/last.pth"
+    sha256: "7A2191E00ED1B493129A87FACFDCDFBC697917D2E615F1B118E71A7367F45F59"
+    size_bytes: 813283450
+    created: "2026-08-16"
+    status: FROZEN_IMMUTABLE
+
+  v1_gan_finetune_best:
+    path: "checkpoints/v1_gan_finetune/best_model.pth"
+    sha256: "5A450E6C92EC65EB89D6C4CBEDCC4880E50D19B3924A170B17AC0B33FCEDF7F9"
+    size_bytes: 560060670
+    created: "2026-07-24"
+    status: FROZEN_IMMUTABLE
+
+  kaggle_realfake_best:
+    path: "checkpoints/kaggle_realfake/best_model.pth"
+    sha256: "0E4ACD30169EB58B9EBEFA478D50B32CDC509B444F1E7CDDDB280E8D9259BC75"
+    size_bytes: 660265348
+    created: "2026-06-18"
+    status: FROZEN_IMMUTABLE
+
+  v1_calibration:
+    path: "checkpoints/kaggle_realfake/calibration.json"
+    note: "Fitted on V1 model. NOT valid for V2 checkpoint. Must refit."
+    status: DEPRECATED_FOR_V2
+
+known_issues:
+  - "V2 evaluation used V1 calibration (wrong model)"
+  - "GradCAM passes zeros for DCT branch"
+  - "External evaluation double-counts on Windows"
+  - "Report mixes 0.5 and 0.1341 thresholds"
+  - "FF++/CelebDF/DFDC loaders have invalid splits"
+  - "MesoNet baseline is 5-epoch preliminary, not fair"
+  - "12 extra stylegan_* images in training not in CSV manifest"
+
+  v3_e2e_multisource_best:
+    path: "checkpoints/v3_e2e_multisource/best_model.pth"
+    created: "2026-08-17"
+    architecture: "DeepfakeDetector (Unfrozen E2E)"
+    training_data: "Kaggle Real-vs-Fake + FF++ c23 (FaceSwap, Deepfakes, Face2Face, NeuralTextures, FaceShifter, DFD)"
+    best_epoch: 11
+    val_auc: 0.8511
+    ffpp_macro_acc: 0.8572
+    status: FROZEN_IMMUTABLE
+    label: "Macro Synthesis & Semantic Alignment Checkpoint"
+
+  v4_seam_hardmining_best:
+    path: "checkpoints/v4_seam_hardmining/best_model.pth"
+    created: "2026-08-18"
+    architecture: "DeepfakeDetector (Seam Boundary Augmentation + Hard Mining)"
+    training_data: "Kaggle (w=1.0) + Hard-Mined FF++ (w=2.5 on FaceSwap/DFD)"
+    best_epoch: 6
+    val_auc: 0.9258
+    dfd_cohort_auc: 0.9995
+    status: FROZEN_IMMUTABLE
+    label: "Hard-Sample Perimeter Mining Checkpoint"
+
+  v5_srm_residual_best:
+    path: "checkpoints/v5_srm_residual/best_model.pth"
+    created: "2026-08-18"
+    architecture: "DeepfakeDetector (3-Channel SRM Steganalysis Residuals)"
+    training_data: "Kaggle StyleGAN + FF++ with Laplacian/Edge Residual Decomposition"
+    best_epoch: 6
+    val_auc: 0.8498
+    train_auc: 0.9703
+    dfd_cohort_auc: 0.9999
+    faceswap_p_fake: 0.8239
+    brier_score: 0.004000
+    temperature: 0.873507
+    status: FROZEN_IMMUTABLE
+    label: "Microscopic Seam & High-Pass Residual SOTA Checkpoint"
+
+  mesonet_baseline_seed42:
+    path: "checkpoints/mesonet_baseline_seed42/best_model.pth"
+    created: "2026-08-17"
+    architecture: "MesoInception-4 (Afchar et al., 2018)"
+    training_data: "Kaggle Real-vs-Fake Split (Seed 42)"
+    accuracy: 0.8416
+    roc_auc: 0.9204
+    status: FROZEN_IMMUTABLE
+
+  xception_baseline_seed42:
+    path: "checkpoints/xception_baseline_seed42/best_model.pth"
+    created: "2026-08-17"
+    architecture: "XceptionNet (Rössler et al., 2019)"
+    training_data: "Kaggle Real-vs-Fake Split (Seed 42)"
+    accuracy: 0.9834
+    roc_auc: 0.9998
+    status: FROZEN_IMMUTABLE
+
+  v7_sota_spectral_best:
+    path: "checkpoints/v7_sota_spectral/best_model.pth"
+    created: "2026-08-18"
+    architecture: "V7SOTADetector (Continuous Phase FFT SPR + 2-Level Wavelet Packet + 9-Ch SRM/Gabor + LSGN Router)"
+    training_data: "Kaggle Real-vs-Fake + FF++ c23 with On-the-Fly SBI Boundary Synthesis"
+    best_epoch: 1
+    val_auc: 0.8370
+    train_auc: 0.9390
+    ffpp_overall_auc: 0.7215
+    deepfakes_auc: 0.7929
+    faceswap_auc: 0.6807
+    faceshifter_auc: 0.6817
+    dfd_auc: 1.0000
+    status: FROZEN_IMMUTABLE
+    label: "2025-2026 SOTA Multi-Spectral & SBI Boundary Specialist Checkpoint"
+

@@ -1,0 +1,125 @@
+{
+  "model": "DeepTrace (v3_multisource_finetune)",
+  "checkpoint": "checkpoints/v3_multisource_finetune/best_model.pth",
+  "overall": {
+    "accuracy": 0.8296428571428571,
+    "roc_auc": 0.5231337083333333,
+    "f1_score": 0.9062389432716123,
+    "brier_score": 0.20883227092017373,
+    "confusion_matrix": [
+      [
+        89,
+        1911
+      ],
+      [
+        474,
+        11526
+      ]
+    ],
+    "n_samples": 14000
+  },
+  "per_manipulation": {
+    "FaceSwap": {
+      "accuracy": 0.50075,
+      "roc_auc": 0.48378462499999997,
+      "f1_score": 0.657167381974249,
+      "brier_score": 0.25921987924592393,
+      "confusion_matrix": [
+        [
+          89,
+          1911
+        ],
+        [
+          86,
+          1914
+        ]
+      ],
+      "n_samples": 4000
+    },
+    "Deepfakes": {
+      "accuracy": 0.49725,
+      "roc_auc": 0.49720774999999995,
+      "f1_score": 0.6539321975563587,
+      "brier_score": 0.26095855583904265,
+      "confusion_matrix": [
+        [
+          89,
+          1911
+        ],
+        [
+          100,
+          1900
+        ]
+      ],
+      "n_samples": 4000
+    },
+    "Face2Face": {
+      "accuracy": 0.501,
+      "roc_auc": 0.48643725,
+      "f1_score": 0.657397871610024,
+      "brier_score": 0.2590095218306815,
+      "confusion_matrix": [
+        [
+          89,
+          1911
+        ],
+        [
+          85,
+          1915
+        ]
+      ],
+      "n_samples": 4000
+    },
+    "NeuralTextures": {
+      "accuracy": 0.50025,
+      "roc_auc": 0.49459512499999997,
+      "f1_score": 0.656706165206938,
+      "brier_score": 0.25936962252974627,
+      "confusion_matrix": [
+        [
+          89,
+          1911
+        ],
+        [
+          88,
+          1912
+        ]
+      ],
+      "n_samples": 4000
+    },
+    "FaceShifter": {
+      "accuracy": 0.49675,
+      "roc_auc": 0.485769875,
+      "f1_score": 0.6534687553795834,
+      "brier_score": 0.26100775603544024,
+      "confusion_matrix": [
+        [
+          89,
+          1911
+        ],
+        [
+          102,
+          1898
+        ]
+      ],
+      "n_samples": 4000
+    },
+    "DeepFakeDetection": {
+      "accuracy": 0.519,
+      "roc_auc": 0.6910120000000001,
+      "f1_score": 0.6737877246524245,
+      "brier_score": 0.2452327698589652,
+      "confusion_matrix": [
+        [
+          89,
+          1911
+        ],
+        [
+          13,
+          1987
+        ]
+      ],
+      "n_samples": 4000
+    }
+  }
+}

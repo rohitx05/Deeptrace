@@ -1,0 +1,94 @@
+{
+  "model": "MesoNet-4 (Afchar et al., 2018)",
+  "params": 17945,
+  "val_metrics": {
+    "accuracy": 0.78965,
+    "roc_auc": 0.8757378350000001,
+    "precision": 0.7768855749928305,
+    "recall": 0.8127,
+    "f1_score": 0.7943893260348956,
+    "brier_score": 0.1460115760564804,
+    "confusion_matrix": [
+      [
+        7666,
+        2334
+      ],
+      [
+        1873,
+        8127
+      ]
+    ],
+    "classification_report": {
+      "Real": {
+        "precision": 0.8036481811510641,
+        "recall": 0.7666,
+        "f1-score": 0.7846870361840421,
+        "support": 10000.0
+      },
+      "Fake": {
+        "precision": 0.7768855749928305,
+        "recall": 0.8127,
+        "f1-score": 0.7943893260348956,
+        "support": 10000.0
+      },
+      "accuracy": 0.78965,
+      "macro avg": {
+        "precision": 0.7902668780719473,
+        "recall": 0.78965,
+        "f1-score": 0.7895381811094688,
+        "support": 20000.0
+      },
+      "weighted avg": {
+        "precision": 0.7902668780719473,
+        "recall": 0.78965,
+        "f1-score": 0.7895381811094688,
+        "support": 20000.0
+      }
+    }
+  },
+  "test_metrics": {
+    "accuracy": 0.7909,
+    "roc_auc": 0.8767770549999999,
+    "precision": 0.7784264931087289,
+    "recall": 0.8133,
+    "f1_score": 0.795481220657277,
+    "brier_score": 0.1456097662448883,
+    "confusion_matrix": [
+      [
+        7685,
+        2315
+      ],
+      [
+        1867,
+        8133
+      ]
+    ],
+    "classification_report": {
+      "Real": {
+        "precision": 0.8045435510887772,
+        "recall": 0.7685,
+        "f1-score": 0.7861088379705401,
+        "support": 10000.0
+      },
+      "Fake": {
+        "precision": 0.7784264931087289,
+        "recall": 0.8133,
+        "f1-score": 0.795481220657277,
+        "support": 10000.0
+      },
+      "accuracy": 0.7909,
+      "macro avg": {
+        "precision": 0.791485022098753,
+        "recall": 0.7908999999999999,
+        "f1-score": 0.7907950293139085,
+        "support": 20000.0
+      },
+      "weighted avg": {
+        "precision": 0.791485022098753,
+        "recall": 0.7909,
+        "f1-score": 0.7907950293139085,
+        "support": 20000.0
+      }
+    }
+  }
+}

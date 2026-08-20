@@ -1,0 +1,15 @@
+{
+  "source_image": "data\\kaggle_realfake\\real_vs_fake\\real-vs-fake\\test\\fake\\00276TOPP4.jpg",
+  "true_label": 1,
+  "true_label_name": "fake",
+  "raw_logit": 13.551466941833496,
+  "raw_probability": 0.9999986886978149,
+  "calibrated_probability": 0.999648928642273,
+  "temperature": 1.703706228247758,
+  "predicted_class": 1,
+  "target_class_for_cam": 1,
+  "tta_used": false,
+  "dct_provided": true,
+  "checkpoint": "checkpoints/v2_clip_finetune/best_model.pth",
+  "protocol": "Single no-TTA forward pass with RGB + DCT input"
+}
