@@ -25,26 +25,29 @@ python_env:
     amp_mode: "Native BFloat16 / FP16 via torch.amp.autocast('mps')"
     auto_detect: utils/device.py
 
-# ─── RIGOROUS AUDITED BENCHMARKS (STRICT VIDEO-DISJOINT 50/50 SPLITS) ─
+# ─── RIGOROUS AUDITED BENCHMARKS (100% ACTOR-DISJOINT 50/50 SPLITS) ───
 metrics:
-  video_disjoint_faceforensics_n12k:
-    v7_macro_auc_5_genuine_cohorts: 0.6334 # Deepfakes, FaceShifter, FaceSwap, Face2Face, NeuralTextures
-    v7_macro_auc_all_6_cohorts: 0.6969
-    v7_calibrated_macro_accuracy_youden: 0.6067 # Calibrated at optimal threshold t* in [0.66, 0.68]
-    v7_uncalibrated_accuracy_thresh05: 0.5005 # Raw 0.5 threshold fails due to real logit positive offset (+0.66)
-    v2_true_zeroshot_macro_auc: 0.5095 # Genuine Zero-Shot baseline (Kaggle-only trained)
-  cohort_breakdown_video_disjoint_n2k_each:
-    deepfakes: {auc: 0.7249, cal_acc: 0.6870, opt_thresh: 0.6826, real_mean: 0.66, fake_mean: 0.99}
-    faceshifter: {auc: 0.6720, cal_acc: 0.6310, opt_thresh: 0.6694, real_mean: 0.66, fake_mean: 0.71}
-    faceswap: {auc: 0.6340, cal_acc: 0.5985, opt_thresh: 0.6714, real_mean: 0.66, fake_mean: 0.71}
-    face2face: {auc: 0.5793, cal_acc: 0.5620, opt_thresh: 0.6646, real_mean: 0.66, fake_mean: 0.69}
-    neuraltextures: {auc: 0.5711, cal_acc: 0.5550, opt_thresh: 0.6631, real_mean: 0.66, fake_mean: 0.68}
-    deepfake_detection: {auc: 1.0000, cal_acc: 1.0000, opt_thresh: 0.9707, real_mean: 0.66, fake_mean: 7.29, status: "Studio actor/lighting distribution shortcut"}
+  actor_disjoint_faceforensics_n14k:
+    v9_clean_macro_auc: 0.5931 # 100% Actor-Disjoint (0% actor or video overlap in train or test)
+    v9_clean_calibrated_macro_accuracy: 0.5755 # Calibrated at optimal Youden threshold t*
+    v7_contaminated_macro_auc: 0.5809 # Old V7 on clean test split (dropped from 0.6334 when evaluated cleanly)
+    v2_true_zeroshot_macro_auc: 0.4945 # True Zero-Shot baseline (random guessing on video frames)
+    dfd_status: "EXCLUDED (Studio vs YouTube domain confound, no matched real video domain)"
+  cohort_breakdown_clean_v9:
+    deepfakes: {auc: 0.6289, cal_acc: 0.6000, opt_thresh: 0.6719, real_mean: 0.51, fake_mean: 0.68}
+    faceshifter: {auc: 0.6171, cal_acc: 0.5898, opt_thresh: 0.6548, real_mean: 0.50, fake_mean: 0.64}
+    faceswap: {auc: 0.5815, cal_acc: 0.5725, opt_thresh: 0.6475, real_mean: 0.49, fake_mean: 0.60}
+    face2face: {auc: 0.5733, cal_acc: 0.5602, opt_thresh: 0.6704, real_mean: 0.49, fake_mean: 0.58}
+    neuraltextures: {auc: 0.5647, cal_acc: 0.5549, opt_thresh: 0.6406, real_mean: 0.50, fake_mean: 0.58}
   in_domain_kaggle_n20k:
     v2_anchor_accuracy: 0.9980
     v2_anchor_auc: 0.99995
-    v7_multisource_accuracy: 0.9672
-    v7_multisource_auc: 0.99955
+    v9_clean_val_auc: 0.9537
+    v9_clean_val_acc: 0.9018
+  checkpoint_isolation:
+    v9_clean_checkpoint: "checkpoints/v9_actor_disjoint/best_model.pth"
+    v7_checkpoint_preserved: "checkpoints/v7_sota_spectral/best_model.pth"
+    v2_checkpoint_preserved: "checkpoints/v2_clip_finetune/best_model.pth"
   parameter_count_reconciliation:
     full_multimodal_container_with_videoswin: 139749023 # 139.7M params (includes 28.2M VideoSwin)
     v7_active_2d_spectral_detector: 119684803 # 119.7M params (VideoSwin replaced with 8.01M Spectral Combiner)

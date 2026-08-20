@@ -16,19 +16,18 @@ status: leakage_audited_heldout_verified
 
 ---
 
-## 📍 Quick Status & Audited Benchmarks (Strict Video-Disjoint 50/50 Balanced Splits)
+## 📍 Quick Status & Audited Benchmarks (100% Actor-Disjoint 50/50 Balanced Splits)
 
-| FaceForensics++ Cohort ($N=2,000$ Balanced 50/50) | Multi-Source Fine-Tuned (V7) [AUC · Calibrated Acc] | Optimal Threshold ($t^*$) | True Zero-Shot Baseline (V2) | Forensic Diagnostic & Confound Status |
+| FaceForensics++ Cohort ($N=2,840$ Balanced 50/50) | Clean Actor-Disjoint (V9) [AUC · Calibrated Acc] | Optimal Threshold ($t^*$) | True Zero-Shot Baseline (V2) | Forensic Diagnostic & Confound Status |
 |---|---|:---:|---|---|
-| **Deepfakes Cohort ($N=2,000$)** | **0.7249 ROC-AUC · 68.70% Acc** | $t^* = 0.6826$ | $0.5050$ ROC-AUC · $50.00\%$ Acc | Genuine cross-manipulation transfer on autoencoders |
-| **FaceShifter Cohort ($N=2,000$)** | **0.6720 ROC-AUC · 63.10% Acc** | $t^* = 0.6694$ | $0.4990$ ROC-AUC · $50.00\%$ Acc | Moderate transfer on high-fidelity boundary seams |
-| **FaceSwap Cohort ($N=2,000$)** | **0.6340 ROC-AUC · 59.85% Acc** | $t^* = 0.6714$ | $0.4975$ ROC-AUC · $50.00\%$ Acc | Moderate transfer on Poisson boundary blending |
-| **Face2Face Cohort ($N=2,000$)** | **0.5793 ROC-AUC · 56.20% Acc** | $t^* = 0.6646$ | $0.4975$ ROC-AUC · $50.00\%$ Acc | Challenging domain gap on expression reenactment |
-| **NeuralTextures Cohort ($N=2,000$)** | **0.5711 ROC-AUC · 55.50% Acc** | $t^* = 0.6631$ | $0.4985$ ROC-AUC · $50.00\%$ Acc | Challenging domain gap on mouth-cavity rendering |
-| **DeepFakeDetection (DFD)** | **1.0000 ROC-AUC · 100.00% Acc** | $t^* = 0.9707$ | $0.5606$ ROC-AUC · $50.00\%$ Acc | ⚠️ **Non-Causal Shortcut Confound** (Studio actor/lighting shift) |
-| **Genuine Macro-Average (5 Cohorts, Excl. DFD)** | **0.6334 ROC-AUC · 60.67% Acc** | $\bar{t}^* \approx 0.6702$ | **0.4994 ROC-AUC · 50.00% Acc** | **Solid mid-tier baseline (+0.1340 AUC gain)** |
-| **Overall Macro-Average (All 6 Cohorts)** | **0.6969 ROC-AUC · 67.22% Acc** | — | **0.5108 ROC-AUC · 50.00% Acc** | **12,000 Total Balanced Video-Disjoint Frames** |
-| **In-Domain Kaggle ($N=20,000$)** | **96.72% Acc · 0.99955 ROC-AUC** | $t^* = 0.5000$ | **99.80% Acc · 0.99995 ROC-AUC** | Strong in-domain StyleGAN detection capacity |
+| **Deepfakes Cohort ($N=2,840$)** | **0.6289 ROC-AUC · 60.00% Acc** | $t^* = 0.6719$ | $0.4944$ ROC-AUC · $50.00\%$ Acc | Genuine cross-manipulation transfer on autoencoders |
+| **FaceShifter Cohort ($N=2,840$)** | **0.6171 ROC-AUC · 58.98% Acc** | $t^* = 0.6548$ | $0.4942$ ROC-AUC · $50.00\%$ Acc | Genuine transfer on high-fidelity boundary seams |
+| **FaceSwap Cohort ($N=2,840$)** | **0.5815 ROC-AUC · 57.25% Acc** | $t^* = 0.6475$ | $0.4980$ ROC-AUC · $50.00\%$ Acc | Genuine transfer on Poisson boundary blending |
+| **Face2Face Cohort ($N=2,840$)** | **0.5733 ROC-AUC · 56.02% Acc** | $t^* = 0.6704$ | $0.4924$ ROC-AUC · $50.00\%$ Acc | Challenging domain gap on expression reenactment |
+| **NeuralTextures Cohort ($N=2,840$)** | **0.5647 ROC-AUC · 55.49% Acc** | $t^* = 0.6406$ | $0.4933$ ROC-AUC · $50.00\%$ Acc | Challenging domain gap on mouth-cavity rendering |
+| **DeepFakeDetection (DFD)** | 🚫 **EXCLUDED** | — | — | ⚠️ **Excluded**: Studio vs YouTube domain confound (no matching reals) |
+| **Clean Macro-Average (5 Cohorts)** | **0.5931 ROC-AUC · 57.55% Acc** | $\bar{t}^* \approx 0.6570$ | **0.4945 ROC-AUC · 50.00% Acc** | **100% Actor-Disjoint (0% actor overlap in train or test)** |
+| **In-Domain Kaggle Validation** | **90.18% Acc · 0.9537 ROC-AUC** | $t^* = 0.5000$ | **99.80% Acc · 0.99995 ROC-AUC** | Clean generalization on multi-source data |
 
 ---
 

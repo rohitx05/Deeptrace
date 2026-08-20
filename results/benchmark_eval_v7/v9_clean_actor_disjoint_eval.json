@@ -1,0 +1,74 @@
+{
+  "evaluation_name": "DeepTrace V9 Clean Actor-Disjoint Evaluation (100% Leak-Free)",
+  "cohorts": {
+    "Deepfakes": {
+      "roc_auc": 0.628939198571712,
+      "accuracy_default_05": 0.5204225352112676,
+      "optimal_threshold_youden": 0.671875,
+      "accuracy_calibrated": 0.6,
+      "f1_calibrated": 0.5767511177347243,
+      "brier_score": 0.25927734375,
+      "sensitivity_tpr": 0.5450704225352113,
+      "specificity_tnr": 0.6549295774647887,
+      "real_logit_mean": 0.509765625,
+      "fake_logit_mean": 0.67626953125,
+      "n_samples": 2840
+    },
+    "FaceSwap": {
+      "roc_auc": 0.5815254909740131,
+      "accuracy_default_05": 0.5130281690140845,
+      "optimal_threshold_youden": 0.6474609375,
+      "accuracy_calibrated": 0.5725352112676056,
+      "f1_calibrated": 0.5819559228650137,
+      "brier_score": 0.262939453125,
+      "sensitivity_tpr": 0.5950704225352113,
+      "specificity_tnr": 0.55,
+      "real_logit_mean": 0.4912109375,
+      "fake_logit_mean": 0.60009765625,
+      "n_samples": 2840
+    },
+    "FaceShifter": {
+      "roc_auc": 0.6170715135885737,
+      "accuracy_default_05": 0.5218309859154929,
+      "optimal_threshold_youden": 0.65478515625,
+      "accuracy_calibrated": 0.5897887323943662,
+      "f1_calibrated": 0.5959070412764481,
+      "brier_score": 0.26025390625,
+      "sensitivity_tpr": 0.6049295774647887,
+      "specificity_tnr": 0.5746478873239437,
+      "real_logit_mean": 0.4951171875,
+      "fake_logit_mean": 0.64013671875,
+      "n_samples": 2840
+    },
+    "Face2Face": {
+      "roc_auc": 0.5732793592541162,
+      "accuracy_default_05": 0.5154929577464789,
+      "optimal_threshold_youden": 0.67041015625,
+      "accuracy_calibrated": 0.5602112676056338,
+      "f1_calibrated": 0.5065191623864085,
+      "brier_score": 0.264404296875,
+      "sensitivity_tpr": 0.45140845070422536,
+      "specificity_tnr": 0.6690140845070423,
+      "real_logit_mean": 0.4873046875,
+      "fake_logit_mean": 0.58447265625,
+      "n_samples": 2840
+    },
+    "NeuralTextures": {
+      "roc_auc": 0.5647448422931959,
+      "accuracy_default_05": 0.5147887323943662,
+      "optimal_threshold_youden": 0.640625,
+      "accuracy_calibrated": 0.5549295774647888,
+      "f1_calibrated": 0.5755540631296172,
+      "brier_score": 0.265625,
+      "sensitivity_tpr": 0.6035211267605634,
+      "specificity_tnr": 0.5063380281690141,
+      "real_logit_mean": 0.495361328125,
+      "fake_logit_mean": 0.58154296875,
+      "n_samples": 2840
+    }
+  },
+  "macro_averages": {
+    "macro_roc_auc": 0.5931120809363221,
+    "macro_calibrated_accuracy": 0.5754929577464789
+  }
+}

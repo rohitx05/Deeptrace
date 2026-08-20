@@ -1,0 +1,163 @@
+{
+  "description": "Actor-Disjoint Leak-Free Evaluation (shuffled 60/40, seed=42, DFD excluded)",
+  "split": {
+    "train_actors": 600,
+    "test_actors": 400
+  },
+  "cohorts": {
+    "Deepfakes": {
+      "v7_multisource": {
+        "roc_auc": 0.6405281690140845,
+        "accuracy_default_05": 0.601056338028169,
+        "optimal_threshold_youden": 0.52783203125,
+        "accuracy_calibrated": 0.6105633802816901,
+        "f1_calibrated": 0.6475462077756533,
+        "brier_score": 0.23974609375,
+        "sensitivity_tpr": 0.7154929577464789,
+        "specificity_tnr": 0.5056338028169014,
+        "real_logit_mean": 0.201171875,
+        "fake_logit_mean": 0.467529296875,
+        "n_samples": 2840
+      },
+      "v2_zeroshot": {
+        "roc_auc": 0.49443141241817096,
+        "accuracy_default_05": 0.5,
+        "optimal_threshold_youden": 9.393692016601562e-05,
+        "accuracy_calibrated": 0.5007042253521127,
+        "f1_calibrated": 0.03929539295392954,
+        "brier_score": 0.5,
+        "sensitivity_tpr": 0.020422535211267606,
+        "specificity_tnr": 0.9809859154929578,
+        "real_logit_mean": -13.953125,
+        "fake_logit_mean": -13.859375,
+        "n_samples": 2840
+      },
+      "n_test_videos": 142,
+      "n_balanced_samples": 2840
+    },
+    "FaceSwap": {
+      "v7_multisource": {
+        "roc_auc": 0.5630145308470542,
+        "accuracy_default_05": 0.5482394366197183,
+        "optimal_threshold_youden": 0.476318359375,
+        "accuracy_calibrated": 0.5556338028169014,
+        "f1_calibrated": 0.6335656213704994,
+        "brier_score": 0.253173828125,
+        "sensitivity_tpr": 0.7683098591549296,
+        "specificity_tnr": 0.3429577464788732,
+        "real_logit_mean": 0.221923828125,
+        "fake_logit_mean": 0.3037109375,
+        "n_samples": 2840
+      },
+      "v2_zeroshot": {
+        "roc_auc": 0.4979994048799841,
+        "accuracy_default_05": 0.5,
+        "optimal_threshold_youden": 2.2113323211669922e-05,
+        "accuracy_calibrated": 0.5031690140845071,
+        "f1_calibrated": 0.07353906762967827,
+        "brier_score": 0.5,
+        "sensitivity_tpr": 0.03943661971830986,
+        "specificity_tnr": 0.9669014084507043,
+        "real_logit_mean": -13.984375,
+        "fake_logit_mean": -13.9140625,
+        "n_samples": 2840
+      },
+      "n_test_videos": 142,
+      "n_balanced_samples": 2840
+    },
+    "FaceShifter": {
+      "v7_multisource": {
+        "roc_auc": 0.5694554651854791,
+        "accuracy_default_05": 0.5492957746478874,
+        "optimal_threshold_youden": 0.478515625,
+        "accuracy_calibrated": 0.5573943661971831,
+        "f1_calibrated": 0.6353350739773717,
+        "brier_score": 0.253173828125,
+        "sensitivity_tpr": 0.7711267605633803,
+        "specificity_tnr": 0.3436619718309859,
+        "real_logit_mean": 0.2313232421875,
+        "fake_logit_mean": 0.3134765625,
+        "n_samples": 2840
+      },
+      "v2_zeroshot": {
+        "roc_auc": 0.49420179527871455,
+        "accuracy_default_05": 0.5,
+        "optimal_threshold_youden": Infinity,
+        "accuracy_calibrated": 0.5,
+        "f1_calibrated": 0.0,
+        "brier_score": 0.5,
+        "sensitivity_tpr": 0.0,
+        "specificity_tnr": 1.0,
+        "real_logit_mean": -13.9921875,
+        "fake_logit_mean": -14.046875,
+        "n_samples": 2840
+      },
+      "n_test_videos": 142,
+      "n_balanced_samples": 2840
+    },
+    "Face2Face": {
+      "v7_multisource": {
+        "roc_auc": 0.5622636877603651,
+        "accuracy_default_05": 0.5422535211267606,
+        "optimal_threshold_youden": 0.478515625,
+        "accuracy_calibrated": 0.5535211267605634,
+        "f1_calibrated": 0.6301050175029171,
+        "brier_score": 0.253173828125,
+        "sensitivity_tpr": 0.7605633802816901,
+        "specificity_tnr": 0.3464788732394366,
+        "real_logit_mean": 0.2132568359375,
+        "fake_logit_mean": 0.2880859375,
+        "n_samples": 2840
+      },
+      "v2_zeroshot": {
+        "roc_auc": 0.4924422237651259,
+        "accuracy_default_05": 0.5,
+        "optimal_threshold_youden": Infinity,
+        "accuracy_calibrated": 0.5,
+        "f1_calibrated": 0.0,
+        "brier_score": 0.5,
+        "sensitivity_tpr": 0.0,
+        "specificity_tnr": 1.0,
+        "real_logit_mean": -13.9140625,
+        "fake_logit_mean": -14.0,
+        "n_samples": 2840
+      },
+      "n_test_videos": 142,
+      "n_balanced_samples": 2840
+    },
+    "NeuralTextures": {
+      "v7_multisource": {
+        "roc_auc": 0.5692816405475104,
+        "accuracy_default_05": 0.5549295774647888,
+        "optimal_threshold_youden": 0.50146484375,
+        "accuracy_calibrated": 0.5563380281690141,
+        "f1_calibrated": 0.5927601809954751,
+        "brier_score": 0.251953125,
+        "sensitivity_tpr": 0.645774647887324,
+        "specificity_tnr": 0.46690140845070427,
+        "real_logit_mean": 0.2020263671875,
+        "fake_logit_mean": 0.28662109375,
+        "n_samples": 2840
+      },
+      "v2_zeroshot": {
+        "roc_auc": 0.493320025788534,
+        "accuracy_default_05": 0.5,
+        "optimal_threshold_youden": Infinity,
+        "accuracy_calibrated": 0.5,
+        "f1_calibrated": 0.0,
+        "brier_score": 0.5,
+        "sensitivity_tpr": 0.0,
+        "specificity_tnr": 1.0,
+        "real_logit_mean": -13.9296875,
+        "fake_logit_mean": -13.9765625,
+        "n_samples": 2840
+      },
+      "n_test_videos": 142,
+      "n_balanced_samples": 2840
+    }
+  },
+  "macro_averages": {
+    "v7_macro_auc": 0.5809086986708987,
+    "v2_macro_auc": 0.49447897242610594
+  }
+}
