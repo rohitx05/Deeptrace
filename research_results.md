@@ -20,3 +20,8 @@
 - V7 actor-disjoint macro AUC: 0.5809.
 - V9 clean actor-disjoint macro AUC: 0.5931.
 - V9 macro calibrated accuracy: 57.55%.
+
+## Baseline Comparison
+- MesoNet-4: 84.16% test accuracy, 0.9204 ROC-AUC, 0.8406 F1, 0.1147 Brier.
+- Xception: 98.34% test accuracy, 0.9998 ROC-AUC, 0.9837 F1, 0.0123 Brier.
+- MesoNet was trained for 15 epochs; Xception was reported at 2 epochs, so the comparison is not a perfectly matched training protocol.
