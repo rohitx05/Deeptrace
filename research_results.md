@@ -33,3 +33,11 @@
 - StyleGAN manipulated probability: 0.9999988.
 - Generated qualitative GradCAM overlays for both samples.
 - No quantitative GradCAM metric is claimed.
+
+## GradCAM Explainability Audit
+- Authentic test image: real/00001.jpg.
+- Manipulated test image: fake/00276TOPP4.jpg.
+- Authentic manipulated probability: 1.18e-06.
+- StyleGAN manipulated probability: 0.9999988.
+- Generated qualitative GradCAM overlays for both samples.
+- No quantitative GradCAM metric is claimed.
