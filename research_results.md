@@ -25,3 +25,11 @@
 - MesoNet-4: 84.16% test accuracy, 0.9204 ROC-AUC, 0.8406 F1, 0.1147 Brier.
 - Xception: 98.34% test accuracy, 0.9998 ROC-AUC, 0.9837 F1, 0.0123 Brier.
 - MesoNet was trained for 15 epochs; Xception was reported at 2 epochs, so the comparison is not a perfectly matched training protocol.
+
+## GradCAM Explainability Audit
+- Authentic test image: real/00001.jpg.
+- Manipulated test image: fake/00276TOPP4.jpg.
+- Authentic manipulated probability: 1.18e-06.
+- StyleGAN manipulated probability: 0.9999988.
+- Generated qualitative GradCAM overlays for both samples.
+- No quantitative GradCAM metric is claimed.
