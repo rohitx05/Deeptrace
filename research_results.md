@@ -41,3 +41,9 @@
 - StyleGAN manipulated probability: 0.9999988.
 - Generated qualitative GradCAM overlays for both samples.
 - No quantitative GradCAM metric is claimed.
+
+## Evaluation Notes
+- Held-out benchmark performance and actor-disjoint generalization measure different evaluation settings and should not be compared as equivalent tests.
+- The strong held-out benchmark result does not establish strong cross-dataset generalization.
+- The V2 zero-shot FF++ evaluation showed severe domain-shift failure.
+- The actor-disjoint V9 evaluation provides a stricter assessment of generalization.
