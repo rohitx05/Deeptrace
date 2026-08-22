@@ -47,3 +47,9 @@
 - The strong held-out benchmark result does not establish strong cross-dataset generalization.
 - The V2 zero-shot FF++ evaluation showed severe domain-shift failure.
 - The actor-disjoint V9 evaluation provides a stricter assessment of generalization.
+
+## Reproducibility
+- Main benchmark checkpoint: checkpoints/v2_clip_finetune/best_model.pth.
+- Actor-disjoint evaluation uses seed 42.
+- V9 evaluation is explicitly designated as 100% leak-free actor-disjoint.
+- Results should be interpreted according to their respective evaluation protocols.
