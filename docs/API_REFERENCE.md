@@ -7,3 +7,9 @@ This document provides a reference for the DeepTrace API.
 ### `POST /auth/login`
 Authenticates a user and returns a JWT token.
 
+## Models
+
+### `GET /models`
+Returns a list of available models.
+
+
