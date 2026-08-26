@@ -133,3 +133,56 @@ def compute_calibration_metrics(predictions: np.ndarray, labels: np.ndarray, n_b
         "bin_confidences": bin_confidences.tolist(),
         "bin_counts": bin_counts.tolist(),
     }
+
+
+def compute_uncertainty_metrics(
+    mc_predictions: np.ndarray,
+    threshold: float = 0.2,
+) -> dict:
+    """
+    Summarise MC-Dropout uncertainty across a dataset.
+
+    Args:
+        mc_predictions: (N, B) array — N passes over B samples.
+        threshold:       Epistemic std above which a prediction is flagged as
+                         high-uncertainty (default 0.2).
+
+    Returns:
+        dict with per-sample arrays and dataset-level aggregates:
+            - mean_pred        (B,)   mean fake probability
+            - epistemic_std    (B,)   standard deviation across passes
+            - predictive_entropy (B,) binary entropy of mean prediction
+            - high_uncertainty (B,)   boolean mask
+            - frac_uncertain   float  fraction of samples flagged
+            - mean_epistemic   float  dataset-level mean epistemic std
+    """
+    if isinstance(mc_predictions, np.ndarray):
+        preds = mc_predictions
+    else:
+        preds = np.array(mc_predictions)  # (N, B)
+
+    mean_pred = preds.mean(axis=0)           # (B,)
+    epistemic_std = preds.std(axis=0)        # (B,)
+
+    # Binary predictive entropy
+    p = np.clip(mean_pred, 1e-7, 1.0 - 1e-7)
+    entropy = -(p * np.log(p) + (1 - p) * np.log(1 - p))
+
+    high_uncertainty = epistemic_std > threshold
+    frac_uncertain = float(high_uncertainty.mean())
+
+    logger.debug(
+        "Uncertainty summary: mean_std=%.4f, frac_uncertain=%.3f",
+        epistemic_std.mean(),
+        frac_uncertain,
+    )
+
+    return {
+        "mean_pred": mean_pred.tolist(),
+        "epistemic_std": epistemic_std.tolist(),
+        "predictive_entropy": entropy.tolist(),
+        "high_uncertainty": high_uncertainty.tolist(),
+        "frac_uncertain": frac_uncertain,
+        "mean_epistemic": float(epistemic_std.mean()),
+    }
+
