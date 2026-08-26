@@ -141,3 +141,61 @@ class Evaluator:
         plt.close()
 
         logger.info(f"Evaluation report saved to {output_path}")
+
+    def batch_evaluate(
+        self,
+        dataloaders: dict[str, DataLoader],
+        output_dir: str = "results/",
+        save_reports: bool = True,
+    ) -> dict:
+        """
+        Evaluate across multiple datasets and return a consolidated summary.
+
+        Args:
+            dataloaders:  Mapping of dataset_name -> DataLoader.
+            output_dir:   Directory for per-dataset reports (if save_reports=True).
+            save_reports: Whether to call generate_report() for each dataset.
+
+        Returns:
+            dict with:
+                - per_dataset: {name: evaluate_dataset() result}
+                - summary: macro-averaged AUC, accuracy, brier_score
+        """
+        per_dataset = {}
+        auc_scores, acc_scores, brier_scores = [], [], []
+
+        for name, loader in dataloaders.items():
+            logger.info(f"[batch_evaluate] Starting: {name}")
+            result = self.evaluate_dataset(loader, dataset_name=name)
+            per_dataset[name] = result
+            m = result["metrics"]
+            if "roc_auc" in m:
+                auc_scores.append(m["roc_auc"])
+            acc_scores.append(m["accuracy"])
+            if "brier_score" in m:
+                brier_scores.append(m["brier_score"])
+            if save_reports:
+                self.generate_report(result, output_dir=output_dir)
+
+        summary = {
+            "datasets": list(dataloaders.keys()),
+            "macro_auc": float(np.mean(auc_scores)) if auc_scores else None,
+            "macro_accuracy": float(np.mean(acc_scores)),
+            "macro_brier": float(np.mean(brier_scores)) if brier_scores else None,
+            "n_datasets": len(dataloaders),
+        }
+
+        logger.info(
+            "[batch_evaluate] Done. macro_auc=%.4f  macro_acc=%.4f",
+            summary["macro_auc"] or 0.0,
+            summary["macro_accuracy"],
+        )
+
+        # Persist summary JSON
+        out_path = Path(output_dir)
+        out_path.mkdir(parents=True, exist_ok=True)
+        with open(out_path / "batch_summary.json", "w") as f:
+            json.dump(summary, f, indent=2)
+
+        return {"per_dataset": per_dataset, "summary": summary}
+
