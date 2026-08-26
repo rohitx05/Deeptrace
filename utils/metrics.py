@@ -7,9 +7,11 @@ from sklearn.metrics import (
     recall_score,
     f1_score,
     roc_auc_score,
+    average_precision_score,
     confusion_matrix,
     classification_report,
     roc_curve,
+    brier_score_loss,
 )
 import logging
 
@@ -40,6 +42,11 @@ def compute_metrics(y_true: np.ndarray, y_pred: np.ndarray, y_prob: np.ndarray =
             metrics["roc_auc"] = float(roc_auc_score(y_true, y_prob))
         except ValueError:
             metrics["roc_auc"] = 0.0
+        try:
+            metrics["average_precision"] = float(average_precision_score(y_true, y_prob))
+        except ValueError:
+            metrics["average_precision"] = 0.0
+        metrics["brier_score"] = float(brier_score_loss(y_true, y_prob))
 
     metrics["confusion_matrix"] = confusion_matrix(y_true, y_pred).tolist()
 
@@ -78,3 +85,42 @@ def print_metrics(metrics: dict, dataset_name: str = ""):
             logger.info(f"  Confusion Matrix:\n{np.array(value)}")
         else:
             logger.info(f"  {key}: {value:.4f}")
+
+
+def compute_bootstrap_ci(
+    y_true: np.ndarray,
+    y_prob: np.ndarray,
+    metric_fn,
+    n_bootstrap: int = 1000,
+    ci: float = 0.95,
+    seed: int = 42,
+) -> tuple[float, float]:
+    """
+    Compute bootstrap confidence interval for a scalar metric.
+
+    Args:
+        y_true:      Ground-truth binary labels.
+        y_prob:      Predicted probabilities.
+        metric_fn:   Callable(y_true, y_prob) -> float  (e.g. roc_auc_score).
+        n_bootstrap: Number of resamples.
+        ci:          Confidence level (default 0.95 → 95% CI).
+        seed:        Random seed for reproducibility.
+
+    Returns:
+        (lower, upper) bounds of the confidence interval.
+    """
+    rng = np.random.default_rng(seed)
+    n = len(y_true)
+    scores = []
+    for _ in range(n_bootstrap):
+        idx = rng.integers(0, n, size=n)
+        try:
+            score = metric_fn(y_true[idx], y_prob[idx])
+            scores.append(score)
+        except ValueError:
+            pass  # skip degenerate resamples (single-class)
+    scores = np.array(scores)
+    alpha = (1.0 - ci) / 2.0
+    lower = float(np.percentile(scores, alpha * 100))
+    upper = float(np.percentile(scores, (1.0 - alpha) * 100))
+    return lower, upper
